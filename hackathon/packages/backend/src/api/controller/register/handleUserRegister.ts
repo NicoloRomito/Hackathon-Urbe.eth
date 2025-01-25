@@ -7,6 +7,7 @@ import UserInfo from "../../../models/userInfo";
 export default function handleUserRegister(req: Request, res: Response) {
 
     try {
+        console.log(req.body);
         let userInfo: UserInfo = req.body;
 
         console.log(userInfo);
