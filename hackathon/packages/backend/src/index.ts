@@ -1,6 +1,9 @@
 
 import dotenv from "dotenv";
 import app from "./api/router/router";
+import {PrismaClient} from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 dotenv.config();
 
