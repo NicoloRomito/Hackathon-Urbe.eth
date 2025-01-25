@@ -5,7 +5,6 @@ import UserInfo from "../../../models/userInfo";
 // TODO: ricordarsi di hardcodare verifiedBy con "SPID" o backend o frontend 
 
 export default function handleUserRegister(req: Request, res: Response) {
-
     try {
         let userInfo: UserInfo = req.body;
 
@@ -18,7 +17,11 @@ export default function handleUserRegister(req: Request, res: Response) {
             
         userInfo.createdAt = new Date();
         userInfo.updatedAt = new Date();
-    
+        if(!repositoryManager.areUserDataValid(userInfo)){
+            res.status(400).send("There is some duplicate data, request not valid");
+            return;
+        }
+        
         repositoryManager.setUser(userInfo);
     
          // TODO: i need to inform the smart contract the it needs to update the mapping of the USER  

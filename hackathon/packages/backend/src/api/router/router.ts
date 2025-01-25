@@ -17,7 +17,6 @@ app.use(express.json());
 
 app.use("/register", registerRouter);
 app.use("/search", searchRouter);
-//app.use("/spid", spidRouter);
 
 
 

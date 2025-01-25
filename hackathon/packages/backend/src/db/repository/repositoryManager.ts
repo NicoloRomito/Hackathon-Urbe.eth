@@ -4,6 +4,32 @@ import CompanyInfo from "../../models/companyInfo";
 
 class RepositoryManager {
 
+  areUserDataValid(userInfo: UserInfo): boolean {
+    const existingUser = prisma.user.findFirst({
+      where: {
+        OR: [
+          { address: userInfo.address },
+          { email: userInfo.email },
+          { codiceFiscale: userInfo.codiceFiscale }
+        ]
+      }
+    });
+    return existingUser === null;
+  }
+
+  areCompanyDataValid(companyInfo: CompanyInfo): boolean {
+    const existingCompany = prisma.company.findFirst({
+      where: {
+        OR: [
+          { address: companyInfo.address },
+          { name: companyInfo.name },
+          { pIva: companyInfo.pIva }
+        ]
+      }
+    });
+    return existingCompany === null;
+  }
+
   isUserRegistred(userInfo: UserInfo): boolean {
     const user = prisma.user.findFirst({
       where: {
