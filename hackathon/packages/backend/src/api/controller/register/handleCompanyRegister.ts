@@ -16,6 +16,11 @@ export default function handleCompanyRegister(req: Request, res: Response) {
     companyInfo.createdAt = new Date();
     companyInfo.updatedAt = new Date();
 
+    if(!repositoryManager.areCompanyDataValid(companyInfo)){
+        res.status(400).send("There is some duplicate data, request not valid");
+        return;
+    }
+
     repositoryManager.setCompany(companyInfo);
 
     // TODO: i need to inform the smart contract the it needs to update the mapping of the  
