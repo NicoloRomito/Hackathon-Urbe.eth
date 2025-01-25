@@ -25,7 +25,7 @@ export default async function hanldeAddressSearch(req: Request, res: Response){
     let response;
     address = req.query.address as string;
     let companyInfo: CompanyInfoDisplay = await repositoryManager.getCompany(address);
-    res.setHeader("Access-Control-Allow-Origin", "*");
+   // res.setHeader("Access-Control-Allow-Origin", "*");
     if(companyInfo){
         response = {
             isUser: false,
@@ -49,7 +49,7 @@ export default async function hanldeAddressSearch(req: Request, res: Response){
             listofNFTs: userInfo.listofNFTs
         }
         res.status(200).json(response);
-        return;
+        return;     
     }
 
     res.status(400).send("Cannot find address you were looking for!");

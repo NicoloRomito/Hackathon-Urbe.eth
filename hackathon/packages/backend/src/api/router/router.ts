@@ -29,7 +29,6 @@ app.use(cors(corsOptions));
 
 app.use("/register", registerRouter);
 app.use("/search", searchRouter);
-//app.use("/spid", spidRouter);
 
 
 
