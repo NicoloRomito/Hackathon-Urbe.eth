@@ -8,6 +8,8 @@ import { Verify } from "./Verify"
 import { useWalletStore } from "./WalletStore"
 import "../../styles/Navbar.css"
 import { ProfileButton } from "../ProfileButton"
+import {RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
+
 
 function ConnectWallet() {
   const { address, isConnected } = useAccount()
@@ -68,7 +70,7 @@ export function Navbar() {
               <ProfileButton />
             </div>
             <div className="ml-3 relative">
-              <ConnectWallet />
+              <RainbowKitCustomConnectButton />
             </div>
           </div>
         </div>

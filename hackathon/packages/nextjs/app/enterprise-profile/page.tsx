@@ -18,7 +18,7 @@ export default function EnterpriseProfilePage() {
     if (address) {
       const userStatus = verifications[address]
       if (!userStatus || !userStatus.isVerified || !userStatus.isEnterprise) {
-        router.push("/verify")
+        alert("Please verify your account first")
       }
     }
   }, [address, verifications, router])

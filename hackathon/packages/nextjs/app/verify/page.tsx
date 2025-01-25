@@ -9,7 +9,7 @@ import { ShieldCheckIcon } from "@heroicons/react/24/outline"
 export default function VerifyPage() {
   const router = useRouter()
   const { address } = useWalletStore()
-  const { setVerification } = useVerificationStore()
+  const { updateVerification } = useVerificationStore()
   const [isEnterprise, setIsEnterprise] = useState(false)
 
   const handleVerify = () => {
@@ -18,7 +18,12 @@ export default function VerifyPage() {
       return
     }
 
-    setVerification(address, { isVerified: true, isEnterprise })
+    updateVerification(address, { 
+      isVerified: true, 
+      isEnterprise,
+      details: {} // You can add more details here if needed
+    })
+    
     router.push(isEnterprise ? "/enterprise-profile" : "/profile")
   }
 

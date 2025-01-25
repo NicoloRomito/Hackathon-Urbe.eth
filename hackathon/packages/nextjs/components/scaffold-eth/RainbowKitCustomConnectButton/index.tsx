@@ -1,6 +1,5 @@
 "use client";
 
-// @refresh reset
 import { Balance } from "../Balance";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { AddressQRCodeModal } from "./AddressQRCodeModal";
@@ -10,17 +9,22 @@ import { Address } from "viem";
 import { useNetworkColor } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
+import { useWalletStore } from "../../Navbar/WalletStore";
+import { useEffect } from "react";
 
-/**
- * Custom Wagmi Connect Button (watch balance + custom design)
- */
 export const RainbowKitCustomConnectButton = () => {
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
+  const { setAddress } = useWalletStore();
 
   return (
     <ConnectButton.Custom>
       {({ account, chain, openConnectModal, mounted }) => {
+        // Update Zustand store whenever account changes
+        useEffect(() => {
+          setAddress(account?.address ?? null);
+        }, [account?.address, setAddress]);
+
         const connected = mounted && account && chain;
         const blockExplorerAddressLink = account
           ? getBlockExplorerAddressLink(targetNetwork, account.address)

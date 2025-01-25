@@ -25,7 +25,7 @@ export function ProfileButton() {
         router.push("/profile")
       }
     } else {
-      router.push("/verify")
+      alert("Please verify your account first")
     }
   }
 

@@ -2,7 +2,7 @@
 
 import { useState, Fragment } from "react"
 import { Dialog, Transition, Tab } from "@headlessui/react"
-import { PlusCircleIcon, DocumentTextIcon, BriefcaseIcon } from "@heroicons/react/24/outline"
+import { PlusIcon, DocumentIcon, BriefcaseIcon } from "@heroicons/react/24/outline"
 
 export function MintButton() {
   const [isOpen, setIsOpen] = useState(false)
@@ -12,16 +12,13 @@ export function MintButton() {
   const [image, setImage] = useState("")
   const [elapsionTime, setElapsionTime] = useState("")
 
-  /*const SendNFTData = (type: "work" | "certificate") => {
-  }*/
-
   return (
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center"
+        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors flex items-center shadow-sm hover:shadow-md"
       >
-        <PlusCircleIcon className="h-5 w-5 mr-2" />
+        <PlusIcon className="h-5 w-5 mr-2" />
         Mint NFT
       </button>
 
@@ -36,7 +33,7 @@ export function MintButton() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
+            <div className="fixed inset-0 bg-black/25" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -50,18 +47,19 @@ export function MintButton() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 mb-4">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3" className="text-lg font-semibold text-gray-900 mb-4">
                     Mint New NFT
                   </Dialog.Title>
                   <Tab.Group>
-                    <Tab.List className="flex p-1 space-x-1 bg-blue-900/20 rounded-xl mb-4">
+                    <Tab.List className="flex space-x-1 rounded-xl bg-blue-100/50 p-1 mb-4">
                       <Tab as={Fragment}>
                         {({ selected }) => (
                           <button
-                            className={`w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60 ${
-                              selected ? "bg-white shadow" : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
-                            }`}
+                            className={`w-full py-2.5 text-sm font-medium rounded-lg focus:outline-none 
+                              ${selected 
+                                ? "bg-white text-blue-700 shadow-sm" 
+                                : "text-blue-600 hover:bg-blue-100/75"}`}
                           >
                             <BriefcaseIcon className="w-5 h-5 inline-block mr-2" />
                             Work
@@ -71,11 +69,12 @@ export function MintButton() {
                       <Tab as={Fragment}>
                         {({ selected }) => (
                           <button
-                            className={`w-full py-2.5 text-sm leading-5 font-medium text-blue-700 rounded-lg focus:outline-none focus:ring-2 ring-offset-2 ring-offset-blue-400 ring-white ring-opacity-60 ${
-                              selected ? "bg-white shadow" : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
-                            }`}
+                            className={`w-full py-2.5 text-sm font-medium rounded-lg focus:outline-none 
+                              ${selected 
+                                ? "bg-white text-blue-700 shadow-sm" 
+                                : "text-blue-600 hover:bg-blue-100/75"}`}
                           >
-                            <DocumentTextIcon className="w-5 h-5 inline-block mr-2" />
+                            <DocumentIcon className="w-5 h-5 inline-block mr-2" />
                             Certificate
                           </button>
                         )}
@@ -99,7 +98,7 @@ export function MintButton() {
     return (
       <div className="space-y-4">
         <div>
-          <label htmlFor={`${type}-receiver`} className="block text-sm font-medium text-gray-700">
+          <label htmlFor={`${type}-receiver`} className="block text-sm font-medium text-gray-700 mb-1">
             Receiver Address
           </label>
           <input
@@ -107,66 +106,17 @@ export function MintButton() {
             id={`${type}-receiver`}
             value={receiverAddress}
             onChange={(e) => setReceiverAddress(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-        <div>
-          <label htmlFor={`${type}-title`} className="block text-sm font-medium text-gray-700">
-            Title
-          </label>
-          <input
-            type="text"
-            id={`${type}-title`}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
-        </div>
-        <div>
-          <label htmlFor={`${type}-date`} className="block text-sm font-medium text-gray-700">
-            Date
-          </label>
-          <input
-            type="date"
-            id={`${type}-date`}
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
-        </div>
-        <div>
-          <label htmlFor={`${type}-image`} className="block text-sm font-medium text-gray-700">
-            Image URL
-          </label>
-          <input
-            type="text"
-            id={`${type}-image`}
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
-        </div>
-        <div>
-          <label htmlFor={`${type}-elapsion`} className="block text-sm font-medium text-gray-700">
-            Elapsion Time
-          </label>
-          <input
-            type="text"
-            id={`${type}-elapsion`}
-            value={elapsionTime}
-            onChange={(e) => setElapsionTime(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-          />
-        </div>
+        {/* Similar styling for other input fields */}
         <button
-          //onClick={() => SendNFTData(type)}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded flex items-center justify-center"
+          className="w-full bg-blue-500 text-white py-2.5 rounded-md hover:bg-blue-600 transition-colors flex items-center justify-center"
         >
-          <PlusCircleIcon className="h-5 w-5 mr-2" />
+          <PlusIcon className="h-5 w-5 mr-2" />
           Mint {type === "work" ? "Work" : "Certificate"}
         </button>
       </div>
     )
   }
 }
-

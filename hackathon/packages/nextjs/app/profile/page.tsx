@@ -17,7 +17,7 @@ export default function ProfilePage() {
     if (address) {
       const userStatus = verifications[address]
       if (!userStatus || !userStatus.isVerified) {
-        router.push("/verify")
+        alert("Please verify your account first")
       } else if (userStatus.isEnterprise) {
         router.push("/enterprise-profile")
       }
