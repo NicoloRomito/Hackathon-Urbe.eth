@@ -1,13 +1,12 @@
-import express, { Express, Request, Response } from "express";
-
-
+import express, { Request, Response } from "express";
+import handleCompanyRegister from "../../controller/register/handleCompanyRegister";
+import handleUserRegister from "../../controller/register/handleUserRegister";
+import { createRequire } from "module";
 
 let registerRouter = express.Router()
 
-registerRouter.post("/", (req: Request, res: Response) => {
-    const { username, password, email } = req.body;
-    res.send(`Register request received for user: ${username}`);
-});
+registerRouter.post("/user", handleUserRegister);
 
+registerRouter.post("/company", handleCompanyRegister);
 
 export default registerRouter;

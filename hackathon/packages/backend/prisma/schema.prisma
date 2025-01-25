@@ -11,18 +11,39 @@ datasource db {
 }
 
 
+
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
+  id         Int    @id @default(autoincrement()) // Unique ID
+  address    String   // Blockchain address
+  verified   Boolean  // Whether the user is verified
+  verifiedBy String?  // Who verified the user (nullable)
+  email      String   @unique // Email, unique
+  nfts       nft[]    // Relationship to NFTs
+  codiceFiscale String @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
+model nft {
+  id         Int    @id @default(autoincrement()) // Unique ID
+  address   String   // Blockchain address
+  timestamp DateTime @default(now()) // When it was created
+  userId    Int?  // Foreign key to User
+  user      User?    @relation(fields: [userId], references: [id]) // Optional relationship to User
+  companyId Int?  // Foreign key to Company
+  company   Company? @relation(fields: [companyId], references: [id]) // Optional relationship to Company
+  title String
+  createdAt DateTime @default(now())
+}
+
+model Company {
+  id       Int    @id @default(autoincrement()) // Unique ID
+  address  String   // Blockchain address
+  name     String   @unique// Company name
+  verified Boolean  // Whether the company is verified
+  pIva     String   @unique // P.IVA, unique
+  nfts     nft[]    // Relationship to NFTs
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
