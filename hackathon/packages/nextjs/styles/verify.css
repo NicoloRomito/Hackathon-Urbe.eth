@@ -1,0 +1,51 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+.verify-button {
+  @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white;
+}
+
+.verify-button-verified {
+  @apply bg-green-600 cursor-not-allowed;
+}
+
+.verify-button-unverified {
+  @apply bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500;
+}
+
+.verification-popup {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.verification-modal {
+  @apply bg-white p-6 rounded-lg shadow-lg max-w-md w-full;
+}
+
+.verification-tabs {
+  @apply flex p-1 space-x-1 bg-blue-900/20 rounded-xl mb-4;
+}
+
+.verification-tab {
+  @apply w-full py-2.5 text-sm font-medium leading-5 text-blue-700 rounded-lg transition-colors;
+}
+
+.verification-tab-active {
+  @apply bg-blue-500 text-white;
+}
+
+.verification-input {
+  @apply w-full px-3 py-2 border rounded text-gray-800 mb-4;
+}
+
+.verification-button {
+  @apply w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600;
+}
+
+.verification-cancel-button {
+  @apply px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500;
+}
+
+.verification-send-button {
+  @apply px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500;
+}
