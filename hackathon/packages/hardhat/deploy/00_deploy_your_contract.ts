@@ -23,7 +23,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  const DEPLOYER = "0x23Af635CD3822EeC338ce9acD1f7e6FA8046b78D";
+  const DEPLOYER = "0x7fB7e3d6fcA92c0cb6Ee9787B60425111196aa93";
 
   await deploy("Manager", {
     from: deployer,
