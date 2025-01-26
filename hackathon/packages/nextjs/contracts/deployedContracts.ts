@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Manager: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       abi: [
         {
           inputs: [
@@ -95,17 +95,17 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "uint256",
-              name: "tokenId",
-              type: "uint256",
+              internalType: "address",
+              name: "owner",
+              type: "address",
             },
           ],
           name: "_ownerOf",
           outputs: [
             {
-              internalType: "address",
+              internalType: "uint256[]",
               name: "",
-              type: "address",
+              type: "uint256[]",
             },
           ],
           stateMutability: "view",

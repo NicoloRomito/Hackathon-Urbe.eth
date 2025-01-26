@@ -35,14 +35,9 @@ contract Manager is Ownable {
 		_tokenId = 0;
 	}
 
-	function _ownerOf(uint256 tokenId) public view returns (address) {
-		if (degreeNFT.ownerOf(tokenId) != address(0)) {
-			console.log("Degree NFT");
-			return degreeNFT.ownerOf(tokenId);
-		} else {
-			console.log("Work Experience NFT");
-			return workNFT.ownerOf(tokenId);
-		}
+	function _ownerOf(address owner) public view returns (uint256[] memory) {
+   		require(owner != address(0), "Token ID does not exist");
+		return _registry[owner];
 	}
 
 	// * Mint Function for Work Experience.
@@ -94,6 +89,7 @@ contract Manager is Ownable {
 		require(companies[msg.sender], "Only a verified company can burn");
 		require(degreeNFT.isExpired(tokenId), "Degree has not expired");
 		degreeNFT.burn(tokenId);
+		removeTokenFromRegistry(msg.sender, tokenId);
 	}
 
 	function removeTokenFromRegistry(address user, uint256 tokenId) public {
