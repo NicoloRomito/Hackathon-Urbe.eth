@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Manager: {
-      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      address: "0x610178dA211FEF7D417bC0e6FeD39F05609AD788",
       abi: [
         {
           inputs: [
@@ -93,7 +93,31 @@ const deployedContracts = {
           type: "event",
         },
         {
+          anonymous: false,
           inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "sender",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "TryToBurn",
+          type: "event",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
             {
               internalType: "address",
               name: "owner",
@@ -103,9 +127,9 @@ const deployedContracts = {
           name: "_ownerOf",
           outputs: [
             {
-              internalType: "uint256[]",
+              internalType: "uint256",
               name: "",
-              type: "uint256[]",
+              type: "uint256",
             },
           ],
           stateMutability: "view",
@@ -197,11 +221,6 @@ const deployedContracts = {
             {
               internalType: "uint256",
               name: "dateTo",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "deadline",
               type: "uint256",
             },
             {

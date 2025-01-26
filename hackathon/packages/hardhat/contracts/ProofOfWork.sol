@@ -6,6 +6,7 @@ import "hardhat/console.sol";
 
 // Use openzeppelin to inherit battle-tested implementations (ERC20, ERC721, etc)
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -14,7 +15,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * @author BuidlGuidl
  */
 
-contract ProofOfWork is ERC721, Ownable {
+contract ProofOfWork is ERC721, ERC721URIStorage, Ownable {
     // * state variables
     uint256 private	_tokenId; // the token id
 	uint256	private	_dateFrom;
@@ -25,6 +26,20 @@ contract ProofOfWork is ERC721, Ownable {
 
     constructor(address initialOwner) ERC721("ProofOfWork", "PoW") Ownable(initialOwner) {
         _tokenId = 0;
+    }
+
+	function _baseURI() internal pure override returns (string memory) {
+        return "https://ipfs.io/ipfs/";
+    }
+
+	function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return super.tokenURI(tokenId);
+    }
+
+	function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721, ERC721URIStorage) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 
     function mint(address to, uint256 id) public {
@@ -54,6 +69,10 @@ contract ProofOfWork is ERC721, Ownable {
     function setDateTo(uint256 dateTo) public {
         _dateTo = dateTo;
     }
+
+	function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal override {
+		super._setTokenURI(tokenId, _tokenURI);
+	}
 
     // * GETTERS //
 

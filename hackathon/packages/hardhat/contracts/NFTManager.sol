@@ -8,6 +8,7 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "contracts/ProofOfDegree.sol";
 import "contracts/ProofOfWork.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -28,6 +29,10 @@ contract Manager is Ownable {
 
     event NFTCreated(address minter, address receiver, address addressNFT, uint256 tokenId);
 
+	event NFTBurned(address burner, uint256 tokenId);
+
+	event TryToBurn(address sender, uint256 tokenId);
+
 	constructor(address owner) Ownable(owner) {
 		degreeNFT = new ProofOfDegree(owner);
 		workNFT = new ProofOfWork(owner);
@@ -35,9 +40,17 @@ contract Manager is Ownable {
 		_tokenId = 0;
 	}
 
-	function _ownerOf(address owner) public view returns (uint256[] memory) {
-   		require(owner != address(0), "Token ID does not exist");
-		return _registry[owner];
+	function _ownerOf(uint256 tokenId, address owner) public view returns (uint256) {
+		uint256[] storage tokenArray = _registry[owner];
+		uint256 length = tokenArray.length;
+
+		// Find the token ID in the user's array
+		for (uint256 i = 0; i < length; i++) {
+			if (tokenArray[i] == tokenId) {
+				return tokenId;
+			}
+		}
+		revert("Token ID not found in the user's registry");
 	}
 
 	// * Mint Function for Work Experience.
@@ -58,7 +71,7 @@ contract Manager is Ownable {
 		workNFT.setDateFrom(dateFrom);
 		workNFT.setDateTo(dateTo);
 		workNFT.mint(to, _tokenId);
-		emit NFTCreated(address(this), to, address(degreeNFT), _tokenId);
+		emit NFTCreated(msg.sender, to, address(workNFT), _tokenId);
 	}
 
 	// * Mint Function for Degree.
@@ -66,7 +79,6 @@ contract Manager is Ownable {
 		address to,
 		uint256 dateFrom,
 		uint256 dateTo,
-		uint256 deadline,
 		string memory degree,
 		string memory description,
 		string memory trainingInstitution
@@ -79,16 +91,22 @@ contract Manager is Ownable {
 		degreeNFT.setDegree(degree);
 		degreeNFT.setDescription(description);
 		degreeNFT.setTrainingInstitution(trainingInstitution);
-		degreeNFT.setDeadline(deadline);
+
 		degreeNFT.safeMint(to, _tokenId);
+		
 		emit NFTCreated(msg.sender, to, address(degreeNFT), _tokenId);
 	}
 
 	// * Burn Function for Degree.
 	function burnDegree(uint256 tokenId) external {
+		emit TryToBurn(msg.sender, tokenId);
+
 		require(companies[msg.sender], "Only a verified company can burn");
-		require(degreeNFT.isExpired(tokenId), "Degree has not expired");
-		degreeNFT.burn(tokenId);
+
+		degreeNFT.burn(msg.sender, tokenId);
+
+		emit NFTBurned(msg.sender, tokenId);
+
 		removeTokenFromRegistry(msg.sender, tokenId);
 	}
 
