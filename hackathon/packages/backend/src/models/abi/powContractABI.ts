@@ -710,6 +710,7 @@ let powAbi: any = [
     "stateMutability": "nonpayable",
     "type": "function"
   }
-]
+] as const;
+
 
   export default powAbi;

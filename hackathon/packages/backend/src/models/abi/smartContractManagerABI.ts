@@ -38,25 +38,6 @@ let managerAbi: any =[
       {
         "indexed": false,
         "internalType": "address",
-        "name": "burner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "NFTBurned",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
         "name": "minter",
         "type": "address"
       },
@@ -102,43 +83,19 @@ let managerAbi: any =[
     "type": "event"
   },
   {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "TryToBurn",
-    "type": "event"
-  },
-  {
     "inputs": [
       {
         "internalType": "uint256",
         "name": "tokenId",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
       }
     ],
-    "name": "_ownerOf",
+    "name": "_ownerOfDegree",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -152,9 +109,28 @@ let managerAbi: any =[
         "type": "uint256"
       }
     ],
-    "name": "burnDegree",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "name": "_ownerOfWork",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_tokenId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -223,28 +199,8 @@ let managerAbi: any =[
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "dateFrom",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "dateTo",
-        "type": "uint256"
-      },
-      {
         "internalType": "string",
-        "name": "degree",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "description",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "trainingInstitution",
+        "name": "uri",
         "type": "string"
       }
     ],
@@ -261,28 +217,8 @@ let managerAbi: any =[
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "dateFrom",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "dateTo",
-        "type": "uint256"
-      },
-      {
         "internalType": "string",
-        "name": "role",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "description",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "companyName",
+        "name": "uri",
         "type": "string"
       }
     ],
@@ -305,18 +241,55 @@ let managerAbi: any =[
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
-        "name": "user",
+        "name": "minter",
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "status",
+        "type": "bool"
       }
     ],
+    "name": "setMinter",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
-];
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "workNFT",
+    "outputs": [
+      {
+        "internalType": "contract ProofOfWork",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]as const;
   export default managerAbi;
