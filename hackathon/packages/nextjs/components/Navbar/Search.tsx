@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline"
+import { useWalletStore } from "./WalletStore"
+
 
 export function Search() {
   const [query, setQuery] = useState("")
@@ -13,20 +15,27 @@ export function Search() {
     if (!query) return
 
     try {
-      const response = await fetch(`http://localhost:3002/search?address=${query}`)
+      const response = await fetch("http://localhost:3002/search/address", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ address: query }),
+      });
+
       if (response.ok) {
-        const data = await response.json()
-        if (data.found) {
+        const data = await response.json();
+        if (data) {
           router.push(`/profile/${query}`)
         } else {
-          alert("No profile found for this wallet address.")
+          alert("No profile found for this wallet address.");
         }
       } else {
-        throw new Error("Search failed")
+        throw new Error("Search failed");
       }
     } catch (error) {
-      console.error("Error during search:", error)
-      alert("An error occurred while searching. Please try again.")
+      console.error("Error during search:", error);
+      alert("An error occurred while searching. Please try again.");
     }
   }
 

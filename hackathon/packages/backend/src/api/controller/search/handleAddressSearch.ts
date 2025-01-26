@@ -24,8 +24,10 @@ export default async function hanldeAddressSearch(req: Request, res: Response){
     let address : string
     let response;
     address = req.body.address;
-    let companyInfo: CompanyInfoDisplay = await repositoryManager.getCompany(address);
-   // res.setHeader("Access-Control-Allow-Origin", "*");
+
+    let companyInfo: CompanyInfoDisplay = await repositoryManager.getCompanyInfo(address);
+    console.log(companyInfo);
+    // res.setHeader("Access-Control-Allow-Origin", "*");
     if(companyInfo){
         response = {
             isUser: false,
@@ -39,7 +41,7 @@ export default async function hanldeAddressSearch(req: Request, res: Response){
     }
 
     let userInfo: UserInfoDisplay = await repositoryManager.getUser(address);
-
+    console.log(userInfo);
     if(userInfo){
         response = {
             isUser: true,

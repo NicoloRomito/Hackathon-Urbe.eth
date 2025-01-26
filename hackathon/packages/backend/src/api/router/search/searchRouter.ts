@@ -4,7 +4,7 @@ import hanldeAddressSearch from "../../controller/search/handleAddressSearch"
 
 const searchRouter = express.Router();
 
-searchRouter.get("/address", hanldeAddressSearch);
+searchRouter.post("/address", hanldeAddressSearch);
 
 // searchRouter.get("/owned", handleOwnedNFT);
 

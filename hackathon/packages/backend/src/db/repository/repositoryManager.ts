@@ -133,13 +133,16 @@ class RepositoryManager {
       title: title,
       userId: userId,
       companyId: companyId,
+      tokenId: tokenId,
     };
   
     // Only add tokenId if it's defined
     if (tokenId !== undefined && tokenId !== null) {
       nftData.tokenId = tokenId;
+    } else {
+      // Generate a random tokenId if not provided
+      nftData.tokenId = Math.floor(Math.random() * 1000);
     }
-  
     // Create NFT record
     return await prisma.nft.create({
       data: nftData,
@@ -173,6 +176,16 @@ class RepositoryManager {
       include: { nfts: true },
     });
     return result === null; 
+  }
+
+  async getCompanyInfo(companyAddress: string): Promise<any> {
+
+    const companyWithNFTs = await prisma.company.findFirst({
+      where: { address: companyAddress },
+      include: { nfts: true }, // Include related NFTs
+    });
+  
+    return companyWithNFTs;
   }
 
   async setCompany(

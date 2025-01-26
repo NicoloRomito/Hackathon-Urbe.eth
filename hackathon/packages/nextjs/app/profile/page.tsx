@@ -6,8 +6,33 @@ import { useWalletStore } from "../../components/Navbar/WalletStore"
 import { useVerificationStore } from "../../utils/scaffold-eth/verificationStore"
 import { NFTGrid } from "../../components/NFTGrid"
 import { UserIcon } from "@heroicons/react/24/outline"
-
+import { useSearchParams } from "next/navigation"
+import {data} from  
 export default function ProfilePage() {
+
+  const searchParams = useSearchParams()
+  
+  const isUser = searchParams.get("isUser")
+  if(isUser){
+    
+    const userInfo = {
+      address: searchParams.get("address"),
+      verified: searchParams.get("verified") === "true",
+      verifiedBy: searchParams.get("verifiedBy"),
+      listofNFTs: searchParams.get("listofNFTs")?.split(",") || []
+    }
+    console.log(userInfo);
+  }else{
+    const companyInfo = {
+      address: searchParams.get("address"),
+      verified: searchParams.get("verified") === "true",
+      name: searchParams.get("name"),
+      listofNFTs: searchParams.get("listofNFTs")?.split(",") || []
+    }
+    console.log(companyInfo);
+  }
+
+  
   const router = useRouter()
   const { address } = useWalletStore()
   const { verifications } = useVerificationStore()

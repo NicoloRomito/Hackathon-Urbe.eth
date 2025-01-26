@@ -9,11 +9,11 @@ import cors  from "cors";
 
 // Configure CORS
 const corsOptions = {
-  origin: 'http://localhost:3000', // or an array of allowed origins like ['http://localhost:3000', 'https://www.example.com']
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers,
-  credentials: true, // Allow cookies, if needed.
-  maxAge: 3600 // Preflight cache duration.
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'], 
+  credentials: true, 
+  maxAge: 3600 
 };
 
 
