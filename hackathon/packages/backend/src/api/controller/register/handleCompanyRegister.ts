@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import repositoryManager from "../../../db/repository/repositoryManager"
 import CompanyInfo from "../../../models/companyInfo";
+// import masterContract from "../../../models/contracts/masterContract";
 
 export default function handleCompanyRegister(req: Request, res: Response) {
     try {
@@ -24,10 +25,10 @@ export default function handleCompanyRegister(req: Request, res: Response) {
     repositoryManager.setCompany(companyInfo);
 
     // TODO: i need to inform the smart contract the it needs to update the mapping of the  
-    
-    res.status(200).send("OK");    
+    //const txhash = masterContract.methods.setMinter(companyInfo.address, true).send({from: companyInfo.address});
+    res.status(200).send("OK");
     } catch (error) {
-        
+        res.status(500).send("Internal server error");
     }
     
 }
