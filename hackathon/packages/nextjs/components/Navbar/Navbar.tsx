@@ -1,4 +1,3 @@
-"use client"
 import Link from "next/link"
 import { useEffect } from "react"
 import { Button } from "@heroui/button"
@@ -6,8 +5,8 @@ import { useAccount, useConnect, useDisconnect } from "wagmi"
 import { injected } from "wagmi/connectors"
 import { Verify } from "./Verify"
 import { useWalletStore } from "./WalletStore"
-import "../../styles/Navbar.css"
 import { ProfileButton } from "../ProfileButton"
+import { Search } from "./Search"
 
 function ConnectWallet() {
   const { address, isConnected } = useAccount()
@@ -15,7 +14,6 @@ function ConnectWallet() {
   const { disconnect } = useDisconnect()
   const { setAddress } = useWalletStore()
 
-  // Update global store when connection status changes
   useEffect(() => {
     setAddress(isConnected ? (address ?? null) : null)
   }, [isConnected, address, setAddress])
@@ -23,7 +21,7 @@ function ConnectWallet() {
   return (
     <Button
       onPress={isConnected ? () => disconnect() : () => connect({ connector: injected() })}
-      className="px-4 py-2 bg-green-500 rounded hover:bg-green-600"
+      className="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors"
     >
       {isConnected ? `Disconnect (${address?.slice(0, 6)}...)` : "Connect Wallet"}
     </Button>
@@ -34,40 +32,23 @@ export function Navbar() {
   const { address } = useWalletStore()
 
   return (
-    <nav className="bg-gray-800 shadow-lg">
-      <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-        <div className="relative flex items-center justify-between h-16">
-          <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-white font-bold text-xl">
-                Home
-              </Link>
-            </div>
-            <div className="hidden sm:block sm:ml-6">
-              <div className="flex space-x-4">
-                <Link
-                  href="/about"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  About
-                </Link>
-                <Link
-                  href="/services"
-                  className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                >
-                  Services
-                </Link>
-              </div>
-            </div>
+    <nav className="bg-white shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <Link href="/" className="text-blue-500 font-bold text-xl">
+              ScaffoldETH
+            </Link>
           </div>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <div className="ml-3 relative">
-              <Verify />
-            </div>
-            <div className="ml-3 relative">
+          <div className="flex-1 flex justify-center px-2 lg:ml-6 lg:justify-end">
+            <Search />
+          </div>
+          <div className="flex items-center">
+            <Verify />
+            <div className="ml-3">
               <ProfileButton />
             </div>
-            <div className="ml-3 relative">
+            <div className="ml-3">
               <ConnectWallet />
             </div>
           </div>

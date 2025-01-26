@@ -1,55 +1,66 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useWalletStore } from "../../components/Navbar/WalletStore"
-import { useVerificationStore } from "../../utils/scaffold-eth/verificationStore"
 import { ShieldCheckIcon } from "@heroicons/react/24/outline"
 
 export default function VerifyPage() {
   const router = useRouter()
   const { address } = useWalletStore()
-  const { setVerification } = useVerificationStore()
-  const [isEnterprise, setIsEnterprise] = useState(false)
+  const [verificationStatus, setVerificationStatus] = useState<{
+    isVerified: boolean
+    verifiedBy: string | null
+  } | null>(null)
 
-  const handleVerify = () => {
-    if (!address) {
-      console.log("Please connect your wallet first")
-      return
+  useEffect(() => {
+    const fetchVerificationStatus = async () => {
+      if (!address) return
+
+      try { 
+        setVerificationStatus({
+          isVerified: true,
+          verifiedBy: "SPID",
+        })
+      } catch (error) {
+        console.error("Error fetching verification status:", error)
+      }
     }
 
-    setVerification(address, { isVerified: true, isEnterprise })
-    router.push(isEnterprise ? "/enterprise-profile" : "/profile")
-  }
+    fetchVerificationStatus()
+  }, [address])
 
   if (!address) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-4">Verification Required</h1>
-        <p>Please connect your wallet using MetaMask to verify your account.</p>
+      <div className="max-w-2xl mx-auto px-4 py-16">
+        <div className="text-center">
+          <ShieldCheckIcon className="mx-auto h-12 w-12 text-gray-400" />
+          <h1 className="mt-2 text-3xl font-semibold text-gray-900">Verification Required</h1>
+          <p className="mt-2 text-gray-600">Please connect your wallet to verify your account.</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">Verify Your Account</h1>
-      <p className="mb-4">Connected Address: {address}</p>
-      <div className="mb-4">
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            checked={isEnterprise}
-            onChange={(e) => setIsEnterprise(e.target.checked)}
-            className="mr-2"
-          />
-          Verify as Enterprise
-        </label>
+    <div className="max-w-2xl mx-auto px-4 py-16">
+      <div className="text-center">
+        <ShieldCheckIcon className="mx-auto h-12 w-12 text-gray-400" />
+        <h1 className="mt-2 text-3xl font-semibold text-gray-900">Account Verification</h1>
+        <p className="mt-2 text-gray-600">Connected Address: {address}</p>
+
+        {verificationStatus?.isVerified ? (
+          <div className="mt-8">
+            <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-green-100 text-green-800">
+              ✓ Verified {verificationStatus.verifiedBy ? `by ${verificationStatus.verifiedBy}` : ""}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-8">
+            <p className="text-gray-600">Your account is pending verification.</p>
+          </div>
+        )}
       </div>
-      <button onClick={handleVerify} className="btn btn-primary">
-        <ShieldCheckIcon className="h-5 w-5 mr-2" />
-        Verify Account
-      </button>
     </div>
   )
 }
