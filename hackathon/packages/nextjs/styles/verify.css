@@ -2,50 +2,35 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-.verify-button {
-  @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white;
-}
-
-.verify-button-verified {
-  @apply bg-green-600 cursor-not-allowed;
-}
-
-.verify-button-unverified {
-  @apply bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500;
-}
-
+/* Override existing verification styles with more Dropbox-like aesthetic */
 .verification-popup {
-  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+  @apply fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50;
 }
 
 .verification-modal {
-  @apply bg-white p-6 rounded-lg shadow-lg max-w-md w-full;
+  @apply bg-white rounded-lg shadow-2xl max-w-md w-full relative p-6;
 }
 
 .verification-tabs {
-  @apply flex p-1 space-x-1 bg-blue-900/20 rounded-xl mb-4;
+  @apply flex bg-gray-100 rounded-lg p-1 mb-6;
 }
 
 .verification-tab {
-  @apply w-full py-2.5 text-sm font-medium leading-5 text-blue-700 rounded-lg transition-colors;
+  @apply flex-1 py-2 rounded-md text-gray-600 hover:bg-gray-200 transition-all;
 }
 
 .verification-tab-active {
-  @apply bg-blue-500 text-white;
+  @apply bg-blue-500 text-white shadow-md;
 }
 
 .verification-input {
-  @apply w-full px-3 py-2 border rounded text-gray-800 mb-4;
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent;
 }
 
 .verification-button {
-  @apply w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600;
+  @apply w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors;
 }
 
 .verification-cancel-button {
-  @apply px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500;
-}
-
-.verification-send-button {
-  @apply px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500;
+  @apply px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors;
 }

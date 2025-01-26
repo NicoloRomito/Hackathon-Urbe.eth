@@ -31,7 +31,7 @@ export function NFTGrid({ nfts, showMintButton, onMint }: NFTGridProps) {
           >
             <div className="aspect-square relative">
               <Image
-                src={nft.image || "/placeholder.svg?height=400&width=400"}
+                src={nft.image || "https://d1.awsstatic.com/certification/badges/AWS-Certified-AI-Practitioner_badge_300x300.85cea45137696692de99a72934f6ddb81f82fc12.png"}
                 alt={nft.title}
                 fill
                 className="object-cover"
@@ -70,7 +70,7 @@ export function NFTGrid({ nfts, showMintButton, onMint }: NFTGridProps) {
               </div>
               <div className="aspect-square relative rounded-lg overflow-hidden mb-4">
                 <Image
-                  src={selectedNFT.image || "/placeholder.svg?height=400&width=400"}
+                  src={selectedNFT.image || "https://d1.awsstatic.com/certification/badges/AWS-Certified-AI-Practitioner_badge_300x300.85cea45137696692de99a72934f6ddb81f82fc12.png"}
                   alt={selectedNFT.title}
                   fill
                   className="object-cover"
