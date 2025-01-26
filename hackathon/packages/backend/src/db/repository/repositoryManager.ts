@@ -57,8 +57,8 @@ class RepositoryManager {
   }
 
   // User Methods
-    getUser(address: string): Promise<any>{
-    return  prisma.user.findFirst({
+  async  getUser(address: string): Promise<any> {
+    return await prisma.user.findFirst({
       where: { address },
       include: { nfts: true }, 
     });
@@ -120,7 +120,8 @@ class RepositoryManager {
     timestamp: Date,
     userId: number,
     companyId: number,
-    title: string
+    title: string,
+    tokenId: number
   ): Promise<any> {
     return await prisma.nft.create({
       data: {
@@ -129,6 +130,7 @@ class RepositoryManager {
         userId,
         companyId,
         title,
+        tokenId,
       },
     });
   }
@@ -146,8 +148,8 @@ class RepositoryManager {
   }
 
   async deleteNFT(id: number): Promise<any> {
-    return await prisma.nft.delete({
-      where: { id },
+    return await prisma.nft.deleteMany({
+      where: { tokenId : id  },
     });
   }
 
@@ -155,7 +157,7 @@ class RepositoryManager {
   async getCompany(address: string): Promise<any> {
     return await prisma.company.findFirst({
       where: { address },
-      include: { nfts: true }, // Include related NFTs
+      include: { nfts: true },
     });
   }
 

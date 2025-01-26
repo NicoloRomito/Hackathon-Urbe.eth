@@ -8,77 +8,16 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "contracts/ProofOfDegree.sol";
 import "contracts/ProofOfWork.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-// /**
-//  * A smart contract that allows changing a state variable of the contract and tracking the changes
-//  * It also allows the owner to withdraw the Ether in the contract
-//  * @author BuidlGuidl
-//  */
-
-// pragma solidity ^0.8.0;
-
-// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
-
-// contract YourContract is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
-//     // Required override methods for multiple inheritance
-//     function _increaseBalance(address account, uint128 amount) internal virtual override(ERC721, ERC721Enumerable) {
-//         super._increaseBalance(account, amount);
-//     }
-
-//     function _update(
-//         address to, 
-//         uint256 tokenId, 
-//         address auth
-//     ) internal virtual override(ERC721, ERC721Enumerable) returns (address) {
-//         return super._update(to, tokenId, auth);
-//     }
-
-// 	uint256 tokenIdCounter = 0;
-
-//     constructor() ERC721("YourContract", "YCB") Ownable(msg.sender) {}
-
-//     function _baseURI() internal pure override returns (string memory) {
-//         return "https://ipfs.io/ipfs/";
-//     }
-
-//     function mintItem(address to, string memory uri) public returns (uint256) {
-//         tokenIdCounter++;
-//         uint256 tokenId = tokenIdCounter;
-//         _safeMint(to, tokenId);
-//         _setTokenURI(tokenId, uri);
-//         return tokenId;
-//     }
-
-//     // The following functions are overrides required by Solidity.
-//     // function _beforeTokenTransfer(
-//     //     address from,
-//     //     address to,
-//     //     uint256 tokenId,
-//     //     uint256 quantity
-//     // ) internal override(ERC721, ERC721Enumerable) {
-//     //     super._beforeTokenTransfer(from, to, tokenId, quantity);
-//     // }
-
-//     // function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
-//     //     super._burn(tokenId);
-//     // }
-
-//     function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
-//         return super.tokenURI(tokenId);
-//     }
-
-//     function supportsInterface(
-//         bytes4 interfaceId
-//     ) public view override(ERC721, ERC721Enumerable, ERC721URIStorage) returns (bool) {
-//         return super.supportsInterface(interfaceId);
-//     }
-// }
+/**
+* A smart contract that allows changing a state variable of the contract and tracking the changes
+* It also allows the owner to withdraw the Ether in the contract
+* @author BuidlGuidl
+*/
 
 contract Manager is Ownable {
 	// * state variables
@@ -90,6 +29,10 @@ contract Manager is Ownable {
 
     event NFTCreated(address minter, address receiver, address addressNFT, uint256 tokenId);
 
+	event NFTBurned(address burner, uint256 tokenId);
+
+	event TryToBurn(address sender, uint256 tokenId);
+
 	constructor(address owner) Ownable(owner) {
 		degreeNFT = new ProofOfDegree(owner);
 		workNFT = new ProofOfWork(owner);
@@ -97,14 +40,17 @@ contract Manager is Ownable {
 		_tokenId = 0;
 	}
 
-	function _ownerOf(uint256 tokenId) public view returns (address) {
-		if (degreeNFT.ownerOf(tokenId) != address(0)) {
-			console.log("Degree NFT");
-			return degreeNFT.ownerOf(tokenId);
-		} else {
-			console.log("Work Experience NFT");
-			return workNFT.ownerOf(tokenId);
+	function _ownerOf(uint256 tokenId, address owner) public view returns (uint256) {
+		uint256[] storage tokenArray = _registry[owner];
+		uint256 length = tokenArray.length;
+
+		// Find the token ID in the user's array
+		for (uint256 i = 0; i < length; i++) {
+			if (tokenArray[i] == tokenId) {
+				return tokenId;
+			}
 		}
+		revert("Token ID not found in the user's registry");
 	}
 
 	// * Mint Function for Work Experience.
@@ -125,7 +71,7 @@ contract Manager is Ownable {
 		workNFT.setDateFrom(dateFrom);
 		workNFT.setDateTo(dateTo);
 		workNFT.mint(to, _tokenId);
-		emit NFTCreated(address(this), to, address(degreeNFT), _tokenId);
+		emit NFTCreated(msg.sender, to, address(workNFT), _tokenId);
 	}
 
 	// * Mint Function for Degree.
@@ -133,7 +79,6 @@ contract Manager is Ownable {
 		address to,
 		uint256 dateFrom,
 		uint256 dateTo,
-		uint256 deadline,
 		string memory degree,
 		string memory description,
 		string memory trainingInstitution
@@ -146,17 +91,47 @@ contract Manager is Ownable {
 		degreeNFT.setDegree(degree);
 		degreeNFT.setDescription(description);
 		degreeNFT.setTrainingInstitution(trainingInstitution);
-		degreeNFT.setDeadline(deadline);
+
 		degreeNFT.safeMint(to, _tokenId);
+		
 		emit NFTCreated(msg.sender, to, address(degreeNFT), _tokenId);
 	}
 
 	// * Burn Function for Degree.
 	function burnDegree(uint256 tokenId) external {
+		emit TryToBurn(msg.sender, tokenId);
+
 		require(companies[msg.sender], "Only a verified company can burn");
-		require(degreeNFT.isExpired(tokenId), "Degree has not expired");
-		degreeNFT.burn(tokenId);
+
+		degreeNFT.burn(msg.sender, tokenId);
+
+		emit NFTBurned(msg.sender, tokenId);
+
+		removeTokenFromRegistry(msg.sender, tokenId);
 	}
+
+	function removeTokenFromRegistry(address user, uint256 tokenId) public {
+		// Ensure the user has tokens registered
+		require(_registry[user].length > 0, "No tokens found for the user");
+
+		uint256[] storage tokenArray = _registry[user];
+		uint256 length = tokenArray.length;
+
+		// Find the token ID in the user's array
+		for (uint256 i = 0; i < length; i++) {
+			if (tokenArray[i] == tokenId) {
+				// Replace the current element with the last element
+				tokenArray[i] = tokenArray[length - 1];
+				// Remove the last element (shorten the array)
+				tokenArray.pop();
+				return;
+			}
+		}
+
+		// If token ID was not found
+		revert("Token ID not found in the user's registry");
+	}
+
 
 	// * SETTERS //
 

@@ -7,6 +7,7 @@ import "hardhat/console.sol";
 // Use openzeppelin to inherit battle-tested implementations (ERC20, ERC721, etc)
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -15,7 +16,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * @author BuidlGuidl
  */
 
-contract ProofOfDegree is ERC721, ERC721Burnable, Ownable {
+contract ProofOfDegree is ERC721, ERC721Burnable, ERC721URIStorage, Ownable {
     // state variables
     uint256 private	_tokenId; // the token id
     uint256	private _dateFrom;
@@ -23,37 +24,47 @@ contract ProofOfDegree is ERC721, ERC721Burnable, Ownable {
 	string  private	_description;
     string  private	_degree;
 	string  private	_trainingInstitution;
-	struct TokenInfo {
-		address	_creator;
-		uint256	_deadline;
-	}
 
-	mapping (uint256 => TokenInfo) private _tokenInfo;
+	mapping (uint256 => address) private _tokenInfo;
 
     // Eventually it could be possible to limit the size of the dinamic strings to reduce the size of the smart contract
 
-    event NFTBurned(address burned, uint256 tokenId);
-
     constructor(address initialOwner) ERC721("ProofOfDegree", "PoD") Ownable(initialOwner) {
         _tokenId = 0;
+    }
+
+	// function _beforeTokenTransfer(
+	// 	address from,
+	// 	address to,
+	// 	uint256 tokenId
+	// ) internal override(ERC721) {
+	// 	super._beforeTokenTransfer(from, to, tokenId);
+	// }
+
+	function _baseURI() internal pure override returns (string memory) {
+        return "https://ipfs.io/ipfs/";
+    }
+
+	function tokenURI(uint256 tokenId) public view override(ERC721, ERC721URIStorage) returns (string memory) {
+        return super.tokenURI(tokenId);
+    }
+
+	function supportsInterface(
+        bytes4 interfaceId
+    ) public view override(ERC721, ERC721URIStorage) returns (bool) {
+        return super.supportsInterface(interfaceId);
     }
 
     function safeMint(address to, uint256 id) public  {
 		require(id > 0, "Token ID must be greater than 0");
         _tokenId = id;
         _safeMint(to, _tokenId);
-		_tokenInfo[_tokenId]._creator = msg.sender;
+		_tokenInfo[_tokenId] = msg.sender;
     }
 
-	function isExpired(uint256 tokenId) public view returns (bool) {
-		return block.timestamp > _tokenInfo[tokenId]._deadline;
-	}
-
-	function burn(uint256 tokenId) public override {
-		require(_tokenInfo[tokenId]._creator == msg.sender, "Only the creator can burn the NFT");
-        require(block.timestamp > _tokenInfo[_tokenId]._deadline, "Deadline has not passed");
+	function burn(address sender, uint256 tokenId) public {
+		require(_tokenInfo[tokenId] == sender, "Only the creator can burn the NFT");
 		_burn(tokenId);
-		emit NFTBurned(msg.sender, tokenId);
 	}
 
 	// * SETTERS //
@@ -77,9 +88,8 @@ contract ProofOfDegree is ERC721, ERC721Burnable, Ownable {
 		_dateTo = dateTo;
 	}
 
-	// TODO: check if the deadline is working
-	function setDeadline(uint256 deadline) public {
-		_tokenInfo[_tokenId]._deadline = block.timestamp + (deadline * 30 seconds);
+	function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal override {
+		super._setTokenURI(tokenId, _tokenURI);
 	}
 
 	// * GETTERS //
@@ -108,7 +118,4 @@ contract ProofOfDegree is ERC721, ERC721Burnable, Ownable {
 		return _dateTo;
 	}
 
-	function getDeadline() public view returns (uint256) {
-		return _tokenInfo[_tokenId]._deadline;
-	}
 }
