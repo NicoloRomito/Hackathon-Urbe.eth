@@ -1,9 +1,10 @@
 import prisma from "../prismaClient";
 import UserInfo from "../../models/userInfo"
 import CompanyInfo from "../../models/companyInfo";
+import { time } from "console";
 
 
-let counter = 0;
+let counter = Math.floor(Date.now() * 1000);
 class RepositoryManager {
 
   areUserDataValid(userInfo: UserInfo): boolean {

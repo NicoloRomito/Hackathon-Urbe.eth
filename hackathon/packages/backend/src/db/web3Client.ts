@@ -10,7 +10,6 @@ const web3 = new Web3(new Web3.providers.WebsocketProvider("wss://ethereum-sepol
 console.log("Connecting to contract manager at", process.env.CONTRACT_MANAGER);
 const manager = new web3.eth.Contract(managerAbi, process.env.CONTRACT_MANAGER);
 
-console.log("Listening for NFT Created events...", manager);
 
 
 export default manager;
