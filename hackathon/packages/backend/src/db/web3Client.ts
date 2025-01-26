@@ -1,8 +1,16 @@
 import Web3 from 'web3';
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
+import managerAbi from '../models/abi/smartContractManagerABI';
 
-dotenv.config()
+dotenv.config();
 
-const web3 = new Web3(process.env.LOCAL_HOST_PROVIDER || "http://localhost:8545");
+const web3 = new Web3(new Web3.providers.WebsocketProvider("ws://localhost:8545")); // Adjust to your local chain's WebSocket port
 
-export default web3;
+// Instantiate contract
+console.log("Connecting to contract manager at", process.env.CONTRACT_MANAGER);
+const manager = new web3.eth.Contract(managerAbi, process.env.CONTRACT_MANAGER);
+
+console.log("Listening for NFT Created events...", manager);
+
+
+export default manager;

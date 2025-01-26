@@ -25,7 +25,8 @@ model User {
 }
 
 model nft {
-  id         Int    @id @default(autoincrement()) // Unique ID
+  id        Int    @id @default(autoincrement()) // Unique ID
+  tokenId   Int    // Token ID
   address   String   // Blockchain address
   timestamp DateTime @default(now()) // When it was created
   userId    Int?  // Foreign key to User
