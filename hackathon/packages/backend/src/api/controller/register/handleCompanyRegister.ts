@@ -16,7 +16,7 @@ export default function handleCompanyRegister(req: Request, res: Response) {
     companyInfo.createdAt = new Date();
     companyInfo.updatedAt = new Date();
 
-    if(!repositoryManager.areCompanyDataValid(companyInfo)){
+    if(repositoryManager.areCompanyDataValid(companyInfo)){
         res.status(400).send("There is some duplicate data, request not valid");
         return;
     }

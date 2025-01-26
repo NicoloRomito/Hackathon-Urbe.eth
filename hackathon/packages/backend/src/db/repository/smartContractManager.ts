@@ -1,11 +1,14 @@
 import web3 from '../web3Client';
 import dotenv from "dotenv"
+import managerAbi from '../../models/abi/smartContractManagerABI';
+import powAbi from '../../models/abi/powContractABI';
+import certicateAbi from '../../models/abi/certicateAbi';
+
 
 dotenv.config();
 
-let managerAbi: any = []
-let powAbi: any = []
-let certicateAbi: any = []
+
+
 
 
 

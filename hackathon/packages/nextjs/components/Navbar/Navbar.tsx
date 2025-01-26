@@ -6,7 +6,7 @@ import { useAccount, useConnect, useDisconnect } from "wagmi"
 import { injected } from "wagmi/connectors"
 import { Verify } from "./Verify"
 import { useWalletStore } from "./WalletStore"
-import "../../styles/Navbar.css"
+import "../../styles/navbar.css"
 import { ProfileButton } from "../ProfileButton"
 
 function ConnectWallet() {

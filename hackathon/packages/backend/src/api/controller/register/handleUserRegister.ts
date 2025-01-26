@@ -18,7 +18,7 @@ export default function handleUserRegister(req: Request, res: Response) {
             
         userInfo.createdAt = new Date();
         userInfo.updatedAt = new Date();
-        if(!repositoryManager.areUserDataValid(userInfo)){
+        if(repositoryManager.areUserDataValid(userInfo)){
             res.status(400).send("There is some duplicate data, request not valid");
             return;
         }
