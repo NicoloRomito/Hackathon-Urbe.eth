@@ -16,14 +16,9 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * @author BuidlGuidl
  */
 
-contract ProofOfDegree is ERC721, ERC721Burnable, ERC721URIStorage, Ownable {
+contract ProofOfDegree is ERC721URIStorage, ERC721Burnable, Ownable {
     // state variables
-    uint256 private	_tokenId; // the token id
-    uint256	private _dateFrom;
-    uint256	private	_dateTo;
-	string  private	_description;
-    string  private	_degree;
-	string  private	_trainingInstitution;
+    uint256 public	_tokenId; // the token id
 
 	mapping (uint256 => address) private _tokenInfo;
 
@@ -55,67 +50,28 @@ contract ProofOfDegree is ERC721, ERC721Burnable, ERC721URIStorage, Ownable {
         return super.supportsInterface(interfaceId);
     }
 
-    function safeMint(address to, uint256 id) public  {
-		require(id > 0, "Token ID must be greater than 0");
-        _tokenId = id;
+    function safeMint(address to) public returns (uint256) {
+		require(_tokenId > 0, "Token ID must be greater than 0");
         _safeMint(to, _tokenId);
+		_tokenId++;
 		_tokenInfo[_tokenId] = msg.sender;
+		return _tokenId;
     }
-
-	function burn(address sender, uint256 tokenId) public {
-		require(_tokenInfo[tokenId] == sender, "Only the creator can burn the NFT");
-		_burn(tokenId);
-	}
 
 	// * SETTERS //
-	function setTrainingInstitution(string memory trainingInstitution) public {
-		_trainingInstitution = trainingInstitution;
-	}
 
-    function setDescription(string memory description) public {
-        _description = description;
-    }
+	function setTokenURI(string memory _tokenURI) public {
 
-    function setDegree(string memory degree) public {
-        _degree = degree;
-    }
-
-	function setDateFrom(uint256 dateFrom) public {
-		_dateFrom = dateFrom;
-	}
-
-	function setDateTo(uint256 dateTo) public {
-		_dateTo = dateTo;
-	}
-
-	function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal override {
-		super._setTokenURI(tokenId, _tokenURI);
+		if (_tokenId == 0) {
+			_tokenId++;
+		}
+		_setTokenURI(_tokenId, _tokenURI);
 	}
 
 	// * GETTERS //
 
 	function getTokenId() public view returns (uint256) {
 		return _tokenId;
-	}
-
-	function getDescription() public view returns (string memory) {
-		return _description;
-	}
-
-	function getDegree() public view returns (string memory) {
-		return _degree;
-	}
-
-	function getTrainingInstitution() public view returns (string memory) {
-		return _trainingInstitution;
-	}
-
-	function getDateFrom() public view returns (uint256) {
-		return _dateFrom;
-	}
-
-	function getDateTo() public view returns (uint256) {
-		return _dateTo;
 	}
 
 }
