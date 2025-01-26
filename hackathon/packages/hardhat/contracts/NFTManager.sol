@@ -21,7 +21,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Manager is Ownable {
 	// * state variables
-	uint256 private				_tokenId; // the token id
+	uint256 public				_tokenId; // the token id
 	mapping (address => bool)	companies; // a map of the companies, verified or not
 	mapping (address => uint256[]) _registry; // a map of the adresses and NFTs
 	ProofOfDegree		public	degreeNFT; // Prof of Degree NFT
@@ -37,104 +37,76 @@ contract Manager is Ownable {
 		degreeNFT = new ProofOfDegree(owner);
 		workNFT = new ProofOfWork(owner);
 		companies[owner] = true;
-		_tokenId = 0;
 	}
 
-	function _ownerOf(uint256 tokenId, address owner) public view returns (uint256) {
-		uint256[] storage tokenArray = _registry[owner];
-		uint256 length = tokenArray.length;
+	function _ownerOfDegree(uint256 tokenId) public view returns (address) {
+		return IERC721(degreeNFT).ownerOf(tokenId);
+	}
 
-		// Find the token ID in the user's array
-		for (uint256 i = 0; i < length; i++) {
-			if (tokenArray[i] == tokenId) {
-				return tokenId;
-			}
-		}
-		revert("Token ID not found in the user's registry");
+	function _ownerOfWork(uint256 tokenId) public view returns (address) {
+		return IERC721(workNFT).ownerOf(tokenId);
 	}
 
 	// * Mint Function for Work Experience.
 	function	mintWorkExperience(
 		address to,
-		uint256 dateFrom,
-		uint256 dateTo,
-		string memory uri,
-		string memory role,
-		string memory description,
-		string memory companyName
+		string memory uri
 	) public {
         require(companies[msg.sender], "Only a verified company can mint");
 
-		_tokenId++;
-		degreeNFT.setTokenURI(_tokenId, uri); // Ensure ProofOfDegree has this function or remove this line
-		workNFT.setDescription(description);
-		workNFT.setCompanyName(companyName);
-		workNFT.setRole(role);
-		workNFT.setDateFrom(dateFrom);
-		workNFT.setDateTo(dateTo);
-		workNFT.mint(to, _tokenId);
+		_tokenId = workNFT.mint(to);
+		workNFT.setTokenURI(uri); // Ensure ProofOfDegree has this function or remove this line
 		emit NFTCreated(msg.sender, to, address(workNFT), _tokenId);
 	}
 
 	// * Mint Function for Degree.
 	function mintDegree(
 		address to,
-		uint256 dateFrom,
-		uint256 dateTo,
-		string memory uri,
-		string memory degree,
-		string memory description,
-		string memory trainingInstitution
+		string memory uri
 	) external {
         require(companies[msg.sender], "Only a verified company can mint");
 
-		_tokenId++;
-		degreeNFT.setTokenURI(_tokenId, uri); // Ensure ProofOfDegree has this function or remove this line
-		degreeNFT.setDateFrom(dateFrom);
-		degreeNFT.setDateTo(dateTo);
-		degreeNFT.setDegree(degree);
-		degreeNFT.setDescription(description);
-		degreeNFT.setTrainingInstitution(trainingInstitution);
+		degreeNFT.setTokenURI(uri); // Ensure ProofOfDegree has this function or remove this line
 
-		degreeNFT.safeMint(to, _tokenId);
+		_tokenId = degreeNFT.safeMint(to);
 		
 		emit NFTCreated(msg.sender, to, address(degreeNFT), _tokenId);
 	}
 
-	// * Burn Function for Degree.
-	function burnDegree(uint256 tokenId) external {
-		emit TryToBurn(msg.sender, tokenId);
+	//  Burn Function for Degree.
+	// function burnDegree(uint256 Id) external {
+	// 	emit TryToBurn(msg.sender, Id);
 
-		require(companies[msg.sender], "Only a verified company can burn");
+	// 	require(companies[msg.sender], "Only a verified company can burn a degree");
 
-		degreeNFT.burn(tokenId);
+	// 	degreeNFT.burn(Id);
 
-		emit NFTBurned(msg.sender, tokenId);
+	// 	emit NFTBurned(msg.sender, Id);
 
-		removeTokenFromRegistry(msg.sender, tokenId);
-	}
+	// 	removeTokenFromRegistry(msg.sender, Id);
+	// }
 
-	function removeTokenFromRegistry(address user, uint256 tokenId) public {
-		// Ensure the user has tokens registered
-		require(_registry[user].length > 0, "No tokens found for the user");
+	// function removeTokenFromRegistry(address user, uint256 tokenId) public {
+	// 	// Ensure the user has tokens registered
+	// 	require(_registry[user].length > 0, "No tokens found for the user");
 
-		uint256[] storage tokenArray = _registry[user];
-		uint256 length = tokenArray.length;
+	// 	uint256[] storage tokenArray = _registry[user];
+	// 	uint256 length = tokenArray.length;
 
-		// Find the token ID in the user's array
-		for (uint256 i = 0; i < length; i++) {
-			if (tokenArray[i] == tokenId) {
-				// Replace the current element with the last element
-				tokenArray[i] = tokenArray[length - 1];
-				// Remove the last element (shorten the array)
-				tokenArray.pop();
-				return;
-			}
-		}
+	// 	// Find the token ID in the user's array
+	// 	for (uint256 i = 0; i < length; i++) {
+	// 		if (tokenArray[i] == tokenId) {
+	// 			// Replace the current element with the last element
+	// 			tokenArray[i] = tokenArray[length - 1];
+	// 			// Remove the last element (shorten the array)
+	// 			tokenArray.pop();
+	// 			return;
+	// 		}
+	// 	}
 
-		// If token ID was not found
-		revert("Token ID not found in the user's registry");
-	}
+	// 	// If token ID was not found
+	// 	revert("Token ID not found in the user's registry");
+	// }
 
 
 	// * SETTERS //

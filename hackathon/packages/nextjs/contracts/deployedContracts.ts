@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Manager: {
-      address: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",
+      address: "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
       abi: [
         {
           inputs: [
@@ -137,13 +137,40 @@ const deployedContracts = {
               name: "tokenId",
               type: "uint256",
             },
+          ],
+          name: "_ownerOfDegree",
+          outputs: [
             {
               internalType: "address",
-              name: "owner",
+              name: "",
               type: "address",
             },
           ],
-          name: "_ownerOf",
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "_ownerOfWork",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "_tokenId",
           outputs: [
             {
               internalType: "uint256",
@@ -158,7 +185,7 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "uint256",
-              name: "tokenId",
+              name: "Id",
               type: "uint256",
             },
           ],
@@ -233,33 +260,8 @@ const deployedContracts = {
               type: "address",
             },
             {
-              internalType: "uint256",
-              name: "dateFrom",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "dateTo",
-              type: "uint256",
-            },
-            {
               internalType: "string",
               name: "uri",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "degree",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "description",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "trainingInstitution",
               type: "string",
             },
           ],
@@ -276,33 +278,8 @@ const deployedContracts = {
               type: "address",
             },
             {
-              internalType: "uint256",
-              name: "dateFrom",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "dateTo",
-              type: "uint256",
-            },
-            {
               internalType: "string",
               name: "uri",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "role",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "description",
-              type: "string",
-            },
-            {
-              internalType: "string",
-              name: "companyName",
               type: "string",
             },
           ],
