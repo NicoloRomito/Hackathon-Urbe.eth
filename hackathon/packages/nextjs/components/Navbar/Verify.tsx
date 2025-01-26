@@ -5,7 +5,7 @@ import { Tabs, Tab } from "@heroui/react"
 import { CheckIcon } from "@heroicons/react/24/solid"
 import { useWalletStore } from './WalletStore'
 import { useVerificationStore } from "../../utils/scaffold-eth/verificationStore"
-import "../../styles/Verify.css"
+import "../../styles/verify.css"
 
 interface UserInfo {
     address: string, 
