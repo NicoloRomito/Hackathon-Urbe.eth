@@ -2,6 +2,8 @@ import prisma from "../prismaClient";
 import UserInfo from "../../models/userInfo"
 import CompanyInfo from "../../models/companyInfo";
 
+
+let counter = 0;
 class RepositoryManager {
 
   areUserDataValid(userInfo: UserInfo): boolean {
@@ -57,9 +59,10 @@ class RepositoryManager {
   }
 
   // User Methods
-  async  getUser(address: string): Promise<any> {
+  async  getUser(address: string, ): Promise<any> {
     return await prisma.user.findFirst({
       where: { address },
+      
       include: { nfts: true }, 
     });
   }
@@ -121,17 +124,25 @@ class RepositoryManager {
     userId: number,
     companyId: number,
     title: string,
-    tokenId: number
+    tokenId?: number // Optional tokenId
   ): Promise<any> {
+    // Create the data object dynamically
+    const nftData: any = {
+      address: address,
+      timestamp: timestamp,
+      title: title,
+      userId: userId,
+      companyId: companyId,
+    };
+  
+    // Only add tokenId if it's defined
+    if (tokenId !== undefined && tokenId !== null) {
+      nftData.tokenId = tokenId;
+    }
+  
+    // Create NFT record
     return await prisma.nft.create({
-      data: {
-        address,
-        timestamp,
-        userId,
-        companyId,
-        title,
-        tokenId,
-      },
+      data: nftData,
     });
   }
 
@@ -147,18 +158,21 @@ class RepositoryManager {
     });
   }
 
-  async deleteNFT(id: number): Promise<any> {
+  async deleteNFT(address: string): Promise<any> {
     return await prisma.nft.deleteMany({
-      where: { tokenId : id  },
+      where: { address : address  },
     });
   }
 
   // Company Methods
   async getCompany(address: string): Promise<any> {
-    return await prisma.company.findFirst({
-      where: { address },
+    let result = await prisma.company.findFirst({
+      where: {
+         address 
+      },
       include: { nfts: true },
     });
+    return result === null; 
   }
 
   async setCompany(
@@ -169,7 +183,7 @@ class RepositoryManager {
         address : companyInfo.address,
         name : companyInfo.name,
         verified : companyInfo.verified,
-        pIva : companyInfo.pIva,
+        pIva : companyInfo.pIva + counter,
         createdAt : companyInfo.createdAt,
         updatedAt : companyInfo.updatedAt,
       },
@@ -187,18 +201,33 @@ class RepositoryManager {
   }
 
   // Relationship Management
-  async assignNFTToUser(nftId: number, userId: number): Promise<any> {
-    return await prisma.nft.update({
+  async assignNFTToUser(nftAddr: string, receiverAddr: string, nftId: number): Promise<any> {
+    const nft =  await prisma.nft.update({
       where: { id: nftId },
-      data: { userId },
+      data: { user: await this.getUser(receiverAddr) },
     });
-  }
+    if(this.isUserRegistred(await this.getUser(receiverAddr))){
+      return nft;
+    }
+    else
+      this.setUser({address: receiverAddr, name:"", lastName:"",  verified: false, verifiedBy: "", email: "", codiceFiscale: "", createdAt: new Date(), updatedAt: new Date()});
+}
 
-  async assignNFTToCompany(nftId: number, companyId: number): Promise<any> {
-    return await prisma.nft.update({
-      where: { id: nftId },
-      data: { companyId },
-    });
+  async assignNFTToCompany(nftAddr: string, companyAddr: string, nftId: number): Promise<any> {
+    if(this.isCompanyRegistred(await this.getCompany(companyAddr))){
+      let result =  await prisma.nft.update({
+        where: { id: nftId },
+        data: { address: nftAddr, company: await this.getCompany(companyAddr) },
+      });
+      
+        return result;
+    }
+    else
+    {
+      counter++;
+      let string = "Company" + counter;
+      this.setCompany({address: companyAddr, name:"", verified: false, pIva: string, createdAt: new Date(), updatedAt: new Date()});
+    }
   }
 }
 

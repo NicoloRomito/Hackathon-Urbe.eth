@@ -23,7 +23,7 @@ interface CompanyInfoDisplay{
 export default async function hanldeAddressSearch(req: Request, res: Response){
     let address : string
     let response;
-    address = req.query.address as string;
+    address = req.body.address;
     let companyInfo: CompanyInfoDisplay = await repositoryManager.getCompany(address);
    // res.setHeader("Access-Control-Allow-Origin", "*");
     if(companyInfo){
