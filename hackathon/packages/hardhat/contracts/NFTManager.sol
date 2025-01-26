@@ -23,15 +23,11 @@ contract Manager is Ownable {
 	// * state variables
 	uint256 public				_tokenId; // the token id
 	mapping (address => bool)	companies; // a map of the companies, verified or not
-	mapping (address => uint256[]) _registry; // a map of the adresses and NFTs
 	ProofOfDegree		public	degreeNFT; // Prof of Degree NFT
 	ProofOfWork	 		public	workNFT; // Proof of Work Experience
 
+	// Called when a new NFT is minted
     event NFTCreated(address minter, address receiver, address addressNFT, uint256 tokenId);
-
-	event NFTBurned(address burner, uint256 tokenId);
-
-	event TryToBurn(address sender, uint256 tokenId);
 
 	constructor(address owner) Ownable(owner) {
 		degreeNFT = new ProofOfDegree(owner);
