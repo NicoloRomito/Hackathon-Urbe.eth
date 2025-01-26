@@ -4,7 +4,7 @@ import handleNFTBurned from "../../controller/events/handleNFTBurned";
 import manager from "../../../db/web3Client";
 
 const nftCreatedEvent = manager.events.NFTCreated();
-const burnEvent = manager.events.NFTBurned();
+//const burnEvent = manager.events.NFTBurned();
 
 export default function eventsRouter() {
     nftCreatedEvent.on("data", (event) => {
@@ -14,10 +14,10 @@ export default function eventsRouter() {
         console.log("Error in event emitter");
     });
 
-    burnEvent.on("data", (event) => {
-        handleNFTBurned(event);
-    });
-    burnEvent.on("error", (error) => {
-        console.log("Error in event emitter");
-    });
+  //  burnEvent.on("data", (event) => {
+  //      handleNFTBurned(event);
+  //  });
+  //  burnEvent.on("error", (error) => {
+  //      console.log("Error in event emitter");
+  //  });
 }
