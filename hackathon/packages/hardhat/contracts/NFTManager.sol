@@ -58,6 +58,7 @@ contract Manager is Ownable {
 		address to,
 		uint256 dateFrom,
 		uint256 dateTo,
+		string memory uri,
 		string memory role,
 		string memory description,
 		string memory companyName
@@ -65,6 +66,7 @@ contract Manager is Ownable {
         require(companies[msg.sender], "Only a verified company can mint");
 
 		_tokenId++;
+		degreeNFT.setTokenURI(_tokenId, uri); // Ensure ProofOfDegree has this function or remove this line
 		workNFT.setDescription(description);
 		workNFT.setCompanyName(companyName);
 		workNFT.setRole(role);
@@ -79,6 +81,7 @@ contract Manager is Ownable {
 		address to,
 		uint256 dateFrom,
 		uint256 dateTo,
+		string memory uri,
 		string memory degree,
 		string memory description,
 		string memory trainingInstitution
@@ -86,6 +89,7 @@ contract Manager is Ownable {
         require(companies[msg.sender], "Only a verified company can mint");
 
 		_tokenId++;
+		degreeNFT.setTokenURI(_tokenId, uri); // Ensure ProofOfDegree has this function or remove this line
 		degreeNFT.setDateFrom(dateFrom);
 		degreeNFT.setDateTo(dateTo);
 		degreeNFT.setDegree(degree);
@@ -103,7 +107,7 @@ contract Manager is Ownable {
 
 		require(companies[msg.sender], "Only a verified company can burn");
 
-		degreeNFT.burn(msg.sender, tokenId);
+		degreeNFT.burn(tokenId);
 
 		emit NFTBurned(msg.sender, tokenId);
 
@@ -136,6 +140,7 @@ contract Manager is Ownable {
 	// * SETTERS //
 
     function setMinter(address minter, bool status) external {
+		require(companies[msg.sender], "Only a verified company can mint");
         companies[minter] = status;
     }
 

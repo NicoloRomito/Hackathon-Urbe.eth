@@ -70,8 +70,8 @@ contract ProofOfWork is ERC721, ERC721URIStorage, Ownable {
         _dateTo = dateTo;
     }
 
-	function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal override {
-		super._setTokenURI(tokenId, _tokenURI);
+	function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
+		_setTokenURI(tokenId, _tokenURI);
 	}
 
     // * GETTERS //

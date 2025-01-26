@@ -23,7 +23,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  const DEPLOYER = "0x7fB7e3d6fcA92c0cb6Ee9787B60425111196aa93";
+  const DEPLOYER = "0x27FE3C7306B0EC2573405591572455FC2C3E4deb";
 
   await deploy("Manager", {
     from: deployer,
@@ -34,6 +34,26 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
+
+  // await deploy("ProofOfWork", {
+  //   from: deployer,
+  //   // Contract constructor arguments
+  //   args: [DEPLOYER],
+  //   log: true,
+  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
+  //   autoMine: true,
+  // });
+
+  // await deploy("ProofOfDegree", {
+  //   from: deployer,
+  //   // Contract constructor arguments
+  //   args: [DEPLOYER],
+  //   log: true,
+  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
+  //   autoMine: true,
+  // });
 
   // Get the deployed contract to interact with it after deploying.
   const yourContract = await hre.ethers.getContract<Contract>("Manager", deployer);

@@ -16,7 +16,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * @author BuidlGuidl
  */
 
-contract ProofOfDegree is ERC721, ERC721Burnable, ERC721URIStorage, Ownable {
+contract ProofOfDegree is ERC721URIStorage, ERC721Burnable, Ownable {
     // state variables
     uint256 private	_tokenId; // the token id
     uint256	private _dateFrom;
@@ -62,8 +62,7 @@ contract ProofOfDegree is ERC721, ERC721Burnable, ERC721URIStorage, Ownable {
 		_tokenInfo[_tokenId] = msg.sender;
     }
 
-	function burn(address sender, uint256 tokenId) public {
-		require(_tokenInfo[tokenId] == sender, "Only the creator can burn the NFT");
+	function burn(uint256 tokenId) public override {
 		_burn(tokenId);
 	}
 
@@ -88,8 +87,8 @@ contract ProofOfDegree is ERC721, ERC721Burnable, ERC721URIStorage, Ownable {
 		_dateTo = dateTo;
 	}
 
-	function _setTokenURI(uint256 tokenId, string memory _tokenURI) internal override {
-		super._setTokenURI(tokenId, _tokenURI);
+	function setTokenURI(uint256 tokenId, string memory _tokenURI) public {
+		_setTokenURI(tokenId, _tokenURI);
 	}
 
 	// * GETTERS //
