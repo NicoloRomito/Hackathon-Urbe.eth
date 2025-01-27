@@ -38,7 +38,7 @@ git clone https://github.com/NicoloRomito/Hackathon-Urbe.eth
 cd Hackathon-Urbe.eth
 yarn install
 yarn install --cwd ./hackathon/packages
-npm --prefix /hackaton/packages/backend run dev
+npm --prefix /hackathon/packages/backend run dev
 yarn start
 ```
 
