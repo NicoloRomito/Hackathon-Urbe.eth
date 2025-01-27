@@ -37,6 +37,7 @@ Before you begin, you need to install the following tools:
 git clone https://github.com/NicoloRomito/Hackathon-Urbe.eth
 cd Hackathon-Urbe.eth
 yarn install
+yarn set version 3.2.3
 yarn install --cwd ./hackathon/packages
 npm --prefix /hackathon/packages/backend run dev
 yarn start
