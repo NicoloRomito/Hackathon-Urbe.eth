@@ -39,7 +39,7 @@ cd Hackathon-Urbe.eth
 yarn install
 yarn set version 3.2.3
 yarn install --cwd ./hackathon/packages
-npm --prefix /hackathon/packages/backend run dev
+npm --prefix ./hackathon/packages/backend run dev
 yarn start
 ```
 
