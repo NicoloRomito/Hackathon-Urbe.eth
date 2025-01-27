@@ -34,6 +34,7 @@ Before you begin, you need to install the following tools:
 
 ## Getting Started
 ```bash
+git clone https://github.com/NicoloRomito/Hackathon-Urbe.eth
 cd Hackathon-Urbe.eth
 yarn install
 yarn install --cwd /hackaton/packages
