@@ -1,6 +1,6 @@
-# UrbETH Hackaton
+# UrbETH Hackathon
 
-This is the repository for the UrbETH Hackaton project.
+This is the repository for the UrbETH Hackathon project.
 
 ## Goals
 
