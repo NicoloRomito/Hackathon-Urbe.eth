@@ -16,25 +16,22 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * @author BuidlGuidl
  */
 
-contract ProofOfDegree is ERC721URIStorage, ERC721Burnable, Ownable {
-    // state variables
-    uint256 public	_tokenId; // the token id
-
+contract ProofOfDegree is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
+	
+	uint256 public _tokenId; 
 	mapping (uint256 => address) private _tokenInfo;
 
-    // Eventually it could be possible to limit the size of the dinamic strings to reduce the size of the smart contract
+    constructor(address initialOwner) ERC721("ProofOfDegree", "PoD") Ownable(initialOwner) 
+	{
+		_tokenId = 1;
+	}
 
-    constructor(address initialOwner) ERC721("ProofOfDegree", "PoD") Ownable(initialOwner) {
-        _tokenId = 0;
-    }
+    function safeMint(address to) public returns (uint256) {
+    	_safeMint(to, _tokenId);
+		_tokenId++;
+		return _tokenId;
+	}
 
-	// function _beforeTokenTransfer(
-	// 	address from,
-	// 	address to,
-	// 	uint256 tokenId
-	// ) internal override(ERC721) {
-	// 	super._beforeTokenTransfer(from, to, tokenId);
-	// }
 
 	function _baseURI() internal pure override returns (string memory) {
         return "https://ipfs.io/ipfs/";
@@ -44,21 +41,12 @@ contract ProofOfDegree is ERC721URIStorage, ERC721Burnable, Ownable {
         return super.tokenURI(tokenId);
     }
 
+
 	function supportsInterface(
         bytes4 interfaceId
     ) public view override(ERC721, ERC721URIStorage) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
-
-    function safeMint(address to) public returns (uint256) {
-		require(_tokenId > 0, "Token ID must be greater than 0");
-        _safeMint(to, _tokenId);
-		_tokenId++;
-		_tokenInfo[_tokenId] = msg.sender;
-		return _tokenId;
-    }
-
-	// * SETTERS //
 
 	function setTokenURI(string memory _tokenURI) public {
 
@@ -66,12 +54,6 @@ contract ProofOfDegree is ERC721URIStorage, ERC721Burnable, Ownable {
 			_tokenId++;
 		}
 		_setTokenURI(_tokenId, _tokenURI);
-	}
-
-	// * GETTERS //
-
-	function getTokenId() public view returns (uint256) {
-		return _tokenId;
 	}
 
 }

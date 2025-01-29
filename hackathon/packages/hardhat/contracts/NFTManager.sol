@@ -9,8 +9,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "contracts/ProofOfDegree.sol";
-import "contracts/ProofOfWork.sol";
+import "./ProofOfDegree.sol";
+import "./ProofOfWork.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
@@ -20,20 +20,33 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 */
 
 contract Manager is Ownable {
-	// * state variables
-	uint256 public				_tokenId; // the token id
-	mapping (address => bool)	companies; // a map of the companies, verified or not
+	uint256 public _tokenId; // the token id
+
+	mapping (address => uint256[]) private usersNFT;
+
+	mapping (address => uint256[]) private companiesNFT;
+	
+	mapping (address => bool) private companiesVerified;
+	
 	ProofOfDegree		public	degreeNFT; // Prof of Degree NFT
 	ProofOfWork	 		public	workNFT; // Proof of Work Experience
 
 	// Called when a new NFT is minted
-    event NFTCreated(address minter, address receiver, address addressNFT, uint256 tokenId);
+    event NFTCreated(address minter, address receiver, uint256 tokenId);
 
 	constructor(address owner) Ownable(owner) {
 		degreeNFT = new ProofOfDegree(owner);
 		workNFT = new ProofOfWork(owner);
-		companies[owner] = true;
+		companiesVerified[owner] = true;
 	}
+
+	function assignNFTtoUSER(address user, uint256 nft) private {
+		usersNFT[user].push(nft);
+	}
+
+	function assignNFTtoCOMPANY(address company, uint256 nft) private {
+		companiesNFT[company].push(nft);
+	}		
 
 	function _ownerOfDegree(uint256 tokenId) public view returns (address) {
 		return IERC721(degreeNFT).ownerOf(tokenId);
@@ -43,16 +56,19 @@ contract Manager is Ownable {
 		return IERC721(workNFT).ownerOf(tokenId);
 	}
 
-	// * Mint Function for Work Experience.
 	function	mintWorkExperience(
 		address to,
 		string memory uri
 	) public {
-        require(companies[msg.sender], "Only a verified company can mint");
-
+        require(companiesVerified[msg.sender], "Only a verified company can mint");
 		_tokenId = workNFT.mint(to);
-		workNFT.setTokenURI(uri); // Ensure ProofOfDegree has this function or remove this line
-		emit NFTCreated(msg.sender, to, address(workNFT), _tokenId);
+		//TODO pass the uri as paramenter to the mint function
+		workNFT.setTokenURI(uri);
+
+		assignNFTtoCOMPANY(msg.sender, _tokenId);
+		assignNFTtoUSER(to, _tokenId);
+
+		emit NFTCreated(msg.sender, to, _tokenId);
 	}
 
 	// * Mint Function for Degree.
@@ -60,71 +76,22 @@ contract Manager is Ownable {
 		address to,
 		string memory uri
 	) external {
-        require(companies[msg.sender], "Only a verified company can mint");
+        require(companiesVerified[msg.sender], "Only a verified company can mint");
 
 		degreeNFT.setTokenURI(uri); // Ensure ProofOfDegree has this function or remove this line
 
 		_tokenId = degreeNFT.safeMint(to);
 		
-		emit NFTCreated(msg.sender, to, address(degreeNFT), _tokenId);
+		emit NFTCreated(msg.sender, to, _tokenId);
 	}
-
-	//  Burn Function for Degree.
-	// function burnDegree(uint256 Id) external {
-	// 	emit TryToBurn(msg.sender, Id);
-
-	// 	require(companies[msg.sender], "Only a verified company can burn a degree");
-
-	// 	degreeNFT.burn(Id);
-
-	// 	emit NFTBurned(msg.sender, Id);
-
-	// 	removeTokenFromRegistry(msg.sender, Id);
-	// }
-
-	// function removeTokenFromRegistry(address user, uint256 tokenId) public {
-	// 	// Ensure the user has tokens registered
-	// 	require(_registry[user].length > 0, "No tokens found for the user");
-
-	// 	uint256[] storage tokenArray = _registry[user];
-	// 	uint256 length = tokenArray.length;
-
-	// 	// Find the token ID in the user's array
-	// 	for (uint256 i = 0; i < length; i++) {
-	// 		if (tokenArray[i] == tokenId) {
-	// 			// Replace the current element with the last element
-	// 			tokenArray[i] = tokenArray[length - 1];
-	// 			// Remove the last element (shorten the array)
-	// 			tokenArray.pop();
-	// 			return;
-	// 		}
-	// 	}
-
-	// 	// If token ID was not found
-	// 	revert("Token ID not found in the user's registry");
-	// }
-
-
-	// * SETTERS //
 
     function setMinter(address minter, bool status) external {
-		require(companies[msg.sender], "Only a verified company can mint");
-        companies[minter] = status;
+		require(companiesVerified[msg.sender], "Only a verified company can add another company");
+        companiesVerified[minter] = status;
     }
 
-	// * GETTERS //
-	// getVerified
-	// @param address -> the address of the company to look for;
 	function getVerified(address company) public view returns (bool) {
-        return companies[company];
+        return companiesVerified[company];
     }
-
-	function getTokenId() public view returns (uint256) {
-		return _tokenId;
-	}
-
-	function getAddressNFT() public view returns (address) {
-		return address(this);
-	}
 
 }

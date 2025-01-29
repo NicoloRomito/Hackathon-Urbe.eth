@@ -5,9 +5,9 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  421614: {
+  31337: {
     Manager: {
-      address: "0x7fB7e3d6fcA92c0cb6Ee9787B60425111196aa93",
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [
@@ -55,12 +55,6 @@ const deployedContracts = {
               indexed: false,
               internalType: "address",
               name: "receiver",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "addressNFT",
               type: "address",
             },
             {
@@ -151,32 +145,6 @@ const deployedContracts = {
               internalType: "contract ProofOfDegree",
               name: "",
               type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getAddressNFT",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getTokenId",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
             },
           ],
           stateMutability: "view",

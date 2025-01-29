@@ -23,12 +23,12 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  const DEPLOYER = "0x7fB7e3d6fcA92c0cb6Ee9787B60425111196aa93";
+  const OWNER = "0x8D78c75E69feBEA903a8E9582fad2b6f949c9469";
 
   await deploy("Manager", {
     from: deployer,
     // Contract constructor arguments
-    args: [DEPLOYER],
+    args: [OWNER],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.

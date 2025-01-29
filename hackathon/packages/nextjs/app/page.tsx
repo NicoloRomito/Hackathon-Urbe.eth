@@ -5,6 +5,7 @@ import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
+import { Footer } from "~~/components/Footer";
 
 const Home: NextPage = () => {
   const { address: connectedAddress } = useAccount();
@@ -47,6 +48,7 @@ const Home: NextPage = () => {
               </div>
             ))}
           </div>
+          <Footer/>
 
           <p className="text-white text-lg leading-relaxed my-8 text-center">
             Che tu sia un utente in cerca di riconoscimenti verificati o un'azienda che desidera emettere certificati, il nostro
