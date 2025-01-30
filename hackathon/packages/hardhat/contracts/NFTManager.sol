@@ -20,24 +20,38 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 */
 
 contract Manager is Ownable {
-	uint256 public _tokenId; // the token id
+
+	struct Verification {
+		bool isVerified;
+		string verifiedBy;
+	}
 
 	mapping (address => uint256[]) private usersNFT;
 
 	mapping (address => uint256[]) private companiesNFT;
 	
 	mapping (address => bool) private companiesVerified;
+
+	mapping(address => Verification) private userVerifications;
 	
+	uint256 public _tokenId; // the token id
+
 	ProofOfDegree		public	degreeNFT; // Prof of Degree NFT
+
 	ProofOfWork	 		public	workNFT; // Proof of Work Experience
 
 	// Called when a new NFT is minted
     event NFTCreated(address minter, address receiver, uint256 tokenId);
-
+	
 	constructor(address owner) Ownable(owner) {
 		degreeNFT = new ProofOfDegree(owner);
 		workNFT = new ProofOfWork(owner);
 		companiesVerified[owner] = true;
+	}
+
+	function addUserToVerification(address user, string memory company) public {
+        require(companiesVerified[msg.sender], "Only a verified company can mint");
+		userVerifications[user].verifiedBy = company;	
 	}
 
 	function assignNFTtoUSER(address user, uint256 nft) private {
@@ -85,7 +99,7 @@ contract Manager is Ownable {
 		emit NFTCreated(msg.sender, to, _tokenId);
 	}
 
-    function setMinter(address minter, bool status) external {
+    function setMinter(address minter, bool status) public {
 		require(companiesVerified[msg.sender], "Only a verified company can add another company");
         companiesVerified[minter] = status;
     }

@@ -63,6 +63,8 @@ export function Verify({ onClose }: { onClose: () => void }) {
       verifiedBy: userForm.verifiedBy || "",
     }
 
+
+    //TODO: Implement the user verification logic
     try {
       const response = await fetch("http://localhost:3002/register/user", {
         method: "POST",
@@ -71,7 +73,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
         },
         body: JSON.stringify(userVerification),
       })
-
+      //if response is ok, we need to contact the smart contract to add the user to verified users
       if (response.ok) {
         alert("User verified successfully")
         setIsVerified(true)

@@ -4,8 +4,6 @@
 
 import { useWriteContract } from "wagmi";
 import { NextPage } from "next";
-import ManagerABI from "../../contracts/abi/ManagerABI"
-import config  from "../../components/wagmiConfig/createConfig";
 import { useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
