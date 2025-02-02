@@ -27,7 +27,7 @@ interface CompanyInfo {
 
 type TabType = "user" | "enterprise"
 
-export function Verify({ onClose }: { onClose: () => void }) {
+export function Verify({ onClose, onSuccess }: { onClose: () => void, onSuccess: () => void }) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabType>("user")
   const { address } = useWalletStore()
@@ -51,10 +51,9 @@ export function Verify({ onClose }: { onClose: () => void }) {
   })
 
   const handleUserVerify = async () => {
-    if (!address) return
-
+    if(!address) return
     const userVerification: UserInfo = {
-      address,
+      address: address || "0xPlaceHolder",
       email: userForm.email || "",
       name: userForm.name || "",
       lastName: userForm.lastName || "",
@@ -63,10 +62,14 @@ export function Verify({ onClose }: { onClose: () => void }) {
       verifiedBy: userForm.verifiedBy || "",
     }
 
-
-    //TODO: Implement the user verification logic
+    if(!userVerification.email || !userVerification.name
+      || !userVerification.lastName || !userVerification.codiceFiscale) {
+      alert("Please fill all the fields")
+      return
+    }
+      //TODO: Implement the user verification logic
     try {
-      const response = await fetch("http://localhost:3002/register/user", {
+      const response = await fetch("http://localhost:3000/api/auth/user", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,12 +78,11 @@ export function Verify({ onClose }: { onClose: () => void }) {
       })
       //if response is ok, we need to contact the smart contract to add the user to verified users
       if (response.ok) {
-        alert("User verified successfully")
-        setIsVerified(true)
-        onClose()
-        router.push("/profile")
+        setIsVerified(true) 
+        alert("User verified successfully: HandleUserVerify")
+        onSuccess()
       } else {
-        alert("User verification failed")
+        alert("User verification failed: HandleUserVerify")
       }
     } catch (error) {
       console.error("Error verifying user:", error)
@@ -110,16 +112,15 @@ export function Verify({ onClose }: { onClose: () => void }) {
       })
 
       if (response.ok) {
-        alert("Company verified successfully")
+        alert("Company verified successfully: handleEnterpriseVerify")
         setIsVerified(true)
-        onClose()
-        router.push("/profile")
+        onSuccess()
       } else {
-        alert("Company verification failed")
+        alert("Company verification failed : handleEnterpriseVerify")
       }
     } catch (error) {
-      console.error("Error verifying company:", error)
-      alert("An error occurred while verifying the company")
+      console.error("Error verifying company: handleEnterpriseVerify", error)
+      alert("An error occurred while verifying the company: handleEnterpriseVerify")
     }
   }
 
@@ -131,27 +132,36 @@ export function Verify({ onClose }: { onClose: () => void }) {
     setShowSPIDPopup(false)
     setUserForm((prev) => ({ ...prev, verifiedBy: "SPID", verified: true }))
 
-    try {
-      const response = await fetch(`http://localhost:3002/verify/spid`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ address, verifiedBy: "SPID" }),
-      })
+    // try {
+    //   const userVerification: UserInfo = {
+    //     address: address || "0xPlaceHolder",
+    //     email: userForm.email || "",
+    //     name: userForm.name || "",
+    //     lastName: userForm.lastName || "",
+    //     codiceF<UserIcon className="h-5 w-5 inline-block mr-2" />iscale: userForm.codiceFiscale || "",
+    //     verified: userForm.verified || false,
+    //     verifiedBy: userForm.verifiedBy || "",
+    //   }
 
-      if (response.ok) {
-        alert("SPID verification successful")
-        setIsVerified(true)
-        onClose()
-        router.push("/profile")
-      } else {
-        throw new Error("Failed to update SPID verification")
-      }
-    } catch (error) {
-      console.error("Error updating SPID verification:", error)
-      alert("An error occurred while verifying with SPID")
-    }
+    
+
+    //   const response = await fetch(`http://localhost:3000/api/auth/user`, {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(userVerification),
+    //   })
+
+    //   if (response.ok) {
+    //     alert("User verified successfully")
+    //   } else {
+    //     throw new Error("Failed to update SPID verification")
+    //   }
+    // } catch (error) {
+    //   console.error("Error updating SPID verification:", error)
+    //   alert("An error occurred while verifying with SPID")
+    // }
   }
 
   return (
@@ -235,12 +245,14 @@ export function Verify({ onClose }: { onClose: () => void }) {
           )}
 
           <div className="flex justify-between mt-6">
+            
             <button
               onClick={onClose}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
             >
               Cancel
             </button>
+
             <button
               onClick={activeTab === "user" ? handleUserVerify : handleEnterpriseVerify}
               disabled={isVerified}
@@ -249,9 +261,11 @@ export function Verify({ onClose }: { onClose: () => void }) {
                   ? "bg-green-600 text-white cursor-not-allowed" 
                   : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"}`}
             >
-              {isVerified ? "Verified" : "Verify"}
+              {isVerified ? "User Verified!!!!" : "Verifyy"}
             </button>
+          
           </div>
+        
         </div>
       </div>
 

@@ -9,10 +9,23 @@ export function SPIDLoginPopup({ onClose, onSuccess }: SPIDLoginPopupProps) {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
     // Simulate SPID login (always successful in this fake version)
-    onSuccess()
+    const response = await fetch("http://localhost:3000/api/auth/user/spid", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    })
+
+    if(response.ok)
+      onSuccess()
+    else
+      onClose()
+
   }
 
   return (

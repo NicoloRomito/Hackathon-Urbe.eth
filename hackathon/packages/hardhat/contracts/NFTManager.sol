@@ -49,6 +49,10 @@ contract Manager is Ownable {
 		companiesVerified[owner] = true;
 	}
 
+	function isUserVerified(address user) public view returns (bool) {
+		return userVerifications[user].isVerified;
+	}
+
 	function addUserToVerification(address user, string memory company) public {
         require(companiesVerified[msg.sender], "Only a verified company can mint");
 		userVerifications[user].verifiedBy = company;	
