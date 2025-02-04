@@ -11,6 +11,9 @@ import { useWalletStore } from "./WalletStore"
 import { ProfileButton } from "../ProfileButton"
 import { Search } from "./Search"
 import { Verify } from "./Verify"
+import { isUserVerified } from "~~/utils/wagmi/isUserVerified"
+import { isCompanyVerified } from "~~/utils/wagmi/isCompanyVerified"
+import { searchIfUserOrCompany } from "~~/utils/wagmi/searchIfUserOrCompany"
 
 function ConnectWallet() {
   const { address, isConnected } = useAccount()
@@ -62,6 +65,30 @@ function ConnectWallet() {
 
 export function Navbar() {
   const [showVerifyPopup, setShowVerifyPopup] = useState(false)
+  const { address } = useAccount();
+  const [userVerified, setUserVerified] = useState(false)
+  const [entityType , setEntityType] = useState<"user" | "company"| "none">("none")
+
+  //TODO make a fetch call to the backend to check if the user is verified
+  useEffect(() => {
+    const checkUserVerified = async () => {
+      if(!address) return
+      const userVerified = await isUserVerified(address)
+      const companyVerified = await isCompanyVerified(address)
+      if(userVerified || companyVerified)
+        setUserVerified(true)
+    }
+    const isUserOrCompany = async() => {
+      if(!address) return
+      const isUser = await searchIfUserOrCompany(address);
+      setEntityType(isUser)
+    }
+    isUserOrCompany()
+    checkUserVerified()
+  }, [address])
+  console.log("userVerified", userVerified)
+  
+  //const userVerified = checkUserVerified()
   return (
     <nav className="bg-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,13 +104,16 @@ export function Navbar() {
           <div className="flex items-center">
             <div className="ml-3">
             <button
-                onClick={() => setShowVerifyPopup(true)}
-                className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md
-            text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Verify
-</button> 
+              onClick={() => setShowVerifyPopup(true)}
+              disabled={!address || userVerified}
+              className={`inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md
+              text-white ${!address || userVerified ? "bg-orange-600 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+            >
+              Verify
+            </button>
             </div>
             <div className="ml-3">
-              <ProfileButton />
+              <ProfileButton entityType={entityType} userVerified={userVerified}/>
             </div>
             <div className="ml-3">
               <ConnectWallet />
@@ -91,7 +121,15 @@ export function Navbar() {
           </div>
         </div>
       </div>
-      {showVerifyPopup && <Verify onClose={() => setShowVerifyPopup(false)} />}
+      {
+        showVerifyPopup && <Verify 
+        isVerified={userVerified}
+        onClose={() => setShowVerifyPopup(false)}
+        onSuccess={() => { 
+        setShowVerifyPopup(false);
+        //TODO understand if its necessary to update the userVerified state because i m checking it with the useEffect
+        setUserVerified(true)}} />
+      }
     </nav>
   )
 }

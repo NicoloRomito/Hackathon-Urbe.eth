@@ -20,38 +20,99 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 */
 
 contract Manager is Ownable {
-
-	struct Verification {
+   
+	struct UserVerificationData {
 		bool isVerified;
 		string verifiedBy;
+		string name;
+		string lastName;
+		string codiceFiscale;
+		string email;
+	}
+	
+	struct CompanyVerificationData {
+		bool isVerified;
+		string name;
+		string partitaIva;
 	}
 
 	mapping (address => uint256[]) private usersNFT;
 
 	mapping (address => uint256[]) private companiesNFT;
 	
-	mapping (address => bool) private companiesVerified;
+	mapping (address => CompanyVerificationData) private companiesVerified;
 
-	mapping(address => Verification) private userVerifications;
+	mapping(address => UserVerificationData) private userVerifications;
 	
-	uint256 public _tokenId; // the token id
+	uint256 public _tokenId; 
 
-	ProofOfDegree		public	degreeNFT; // Prof of Degree NFT
+	ProofOfDegree		public	degreeNFT;
 
-	ProofOfWork	 		public	workNFT; // Proof of Work Experience
+	ProofOfWork	 		public	workNFT;
 
-	// Called when a new NFT is minted
     event NFTCreated(address minter, address receiver, uint256 tokenId);
 	
 	constructor(address owner) Ownable(owner) {
 		degreeNFT = new ProofOfDegree(owner);
 		workNFT = new ProofOfWork(owner);
-		companiesVerified[owner] = true;
+		companiesVerified[owner].isVerified = true;
+		companiesVerified[owner].name = "DE-VY";
+		companiesVerified[owner].partitaIva = "FAKEPARTITAIVA";
 	}
 
-	function addUserToVerification(address user, string memory company) public {
-        require(companiesVerified[msg.sender], "Only a verified company can mint");
+	function isUserOrCompany(address addressToCheck) public view returns (string memory entity) {
+    	if (companiesVerified[addressToCheck].isVerified) {
+    	    return "company";
+    	}
+    	if (userVerifications[addressToCheck].isVerified) {
+    	    return "user";
+    	}
+    	return "none";
+	}
+
+	function isUserVerified(address user) public view onlyOwner returns (bool) {
+		return userVerifications[user].isVerified;
+	}
+
+	function isCompanyVerified(address company) public view onlyOwner returns (bool) {
+		return companiesVerified[company].isVerified;
+	}
+
+	function getUserVerificationData(address user) public view onlyOwner returns (UserVerificationData memory) {
+		return userVerifications[user];
+	}
+
+	function getCompanyVerificationData(address company) public view  onlyOwner returns (CompanyVerificationData memory) {
+		return companiesVerified[company];
+	}
+
+	function setCompanyVerification(
+		address company,
+		string memory name,
+		bool isVerified,
+		string memory partitaIva
+		) public onlyOwner {
+
+		companiesVerified[company].isVerified = isVerified;
+		companiesVerified[company].name = name;
+		companiesVerified[company].partitaIva = partitaIva;
+	}
+
+	function setUserVerification(
+		address user,
+		string memory company,
+		bool isVerified, 
+		string memory name,
+		string memory lastName,
+		string memory codiceFiscale,
+		string memory email
+		) public onlyOwner{
 		userVerifications[user].verifiedBy = company;	
+		userVerifications[user].isVerified = isVerified;
+		userVerifications[user].name = name;
+		userVerifications[user].lastName = lastName;
+		userVerifications[user].codiceFiscale = codiceFiscale;
+		userVerifications[user].email = email;
 	}
 
 	function assignNFTtoUSER(address user, uint256 nft) private {
@@ -73,8 +134,7 @@ contract Manager is Ownable {
 	function	mintWorkExperience(
 		address to,
 		string memory uri
-	) public {
-        require(companiesVerified[msg.sender], "Only a verified company can mint");
+	) public onlyOwner {
 		_tokenId = workNFT.mint(to);
 		//TODO pass the uri as paramenter to the mint function
 		workNFT.setTokenURI(uri);
@@ -85,12 +145,10 @@ contract Manager is Ownable {
 		emit NFTCreated(msg.sender, to, _tokenId);
 	}
 
-	// * Mint Function for Degree.
 	function mintDegree(
 		address to,
 		string memory uri
-	) external {
-        require(companiesVerified[msg.sender], "Only a verified company can mint");
+	) external onlyOwner {
 
 		degreeNFT.setTokenURI(uri); // Ensure ProofOfDegree has this function or remove this line
 
@@ -99,13 +157,12 @@ contract Manager is Ownable {
 		emit NFTCreated(msg.sender, to, _tokenId);
 	}
 
-    function setMinter(address minter, bool status) public {
-		require(companiesVerified[msg.sender], "Only a verified company can add another company");
-        companiesVerified[minter] = status;
+    function setMinter(address minter, bool status) public onlyOwner{
+        companiesVerified[minter].isVerified = status;
     }
 
-	function getVerified(address company) public view returns (bool) {
-        return companiesVerified[company];
-    }
+	// function getVerified(address company) public view returns (bool) {
+    //     return companiesVerified[company].isVerified;
+    // }
 
 }

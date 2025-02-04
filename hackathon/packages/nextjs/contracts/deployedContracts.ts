@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Manager: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       abi: [
         {
           inputs: [
@@ -138,24 +138,6 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "address",
-              name: "user",
-              type: "address",
-            },
-            {
-              internalType: "string",
-              name: "company",
-              type: "string",
-            },
-          ],
-          name: "addUserToVerification",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
           inputs: [],
           name: "degreeNFT",
           outputs: [
@@ -176,7 +158,132 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "getVerified",
+          name: "getCompanyVerificationData",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "bool",
+                  name: "isVerified",
+                  type: "bool",
+                },
+                {
+                  internalType: "string",
+                  name: "name",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "partitaIva",
+                  type: "string",
+                },
+              ],
+              internalType: "struct Manager.CompanyVerificationData",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "getUserVerificationData",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "bool",
+                  name: "isVerified",
+                  type: "bool",
+                },
+                {
+                  internalType: "string",
+                  name: "verifiedBy",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "name",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "lastName",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "codiceFiscale",
+                  type: "string",
+                },
+                {
+                  internalType: "string",
+                  name: "email",
+                  type: "string",
+                },
+              ],
+              internalType: "struct Manager.UserVerificationData",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "company",
+              type: "address",
+            },
+          ],
+          name: "isCompanyVerified",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "addressToCheck",
+              type: "address",
+            },
+          ],
+          name: "isUserOrCompany",
+          outputs: [
+            {
+              internalType: "string",
+              name: "entity",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+          ],
+          name: "isUserVerified",
           outputs: [
             {
               internalType: "bool",
@@ -247,6 +354,34 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "company",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "name",
+              type: "string",
+            },
+            {
+              internalType: "bool",
+              name: "isVerified",
+              type: "bool",
+            },
+            {
+              internalType: "string",
+              name: "partitaIva",
+              type: "string",
+            },
+          ],
+          name: "setCompanyVerification",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "minter",
               type: "address",
             },
@@ -257,6 +392,49 @@ const deployedContracts = {
             },
           ],
           name: "setMinter",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "user",
+              type: "address",
+            },
+            {
+              internalType: "string",
+              name: "company",
+              type: "string",
+            },
+            {
+              internalType: "bool",
+              name: "isVerified",
+              type: "bool",
+            },
+            {
+              internalType: "string",
+              name: "name",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "lastName",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "codiceFiscale",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "email",
+              type: "string",
+            },
+          ],
+          name: "setUserVerification",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",

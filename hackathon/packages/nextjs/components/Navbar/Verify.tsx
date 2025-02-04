@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useWalletStore } from "./WalletStore"
 import { UserIcon, BuildingOfficeIcon } from "@heroicons/react/24/outline"
 import { SPIDLoginPopup } from "./SPIDLoginPopup"
+import { setUserVerification } from "~~/utils/wagmi/setUserVerification"
+import { setCompanyVerification } from "~~/utils/wagmi/setCompanyVerification"
 
 interface UserInfo {
   address: string
@@ -21,19 +23,15 @@ interface CompanyInfo {
   name: string
   verified: boolean
   pIva: string
-  createdAt: Date
-  updatedAt: Date
 }
 
 type TabType = "user" | "enterprise"
 
-export function Verify({ onClose }: { onClose: () => void }) {
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState<TabType>("user")
-  const { address } = useWalletStore()
-  const [showSPIDPopup, setShowSPIDPopup] = useState(false)
-  const [isVerified, setIsVerified] = useState(false)
-
+export function Verify({ isVerified, onClose, onSuccess }: { isVerified: boolean; onClose: () => void; onSuccess: () => void }) {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<TabType>("user");
+  const { address } = useWalletStore();
+  const [showSPIDPopup, setShowSPIDPopup] = useState(false);
   const [userForm, setUserForm] = useState<Partial<UserInfo>>({
     email: "",
     name: "",
@@ -41,124 +39,70 @@ export function Verify({ onClose }: { onClose: () => void }) {
     codiceFiscale: "",
     verified: false,
     verifiedBy: "",
-  })
-
+  });
   const [enterpriseForm, setEnterpriseForm] = useState<Partial<CompanyInfo>>({
     address: "",
     name: "",
     verified: false,
     pIva: "",
-  })
+  });
 
   const handleUserVerify = async () => {
-    if (!address) return
-
+    if (!address) return;
     const userVerification: UserInfo = {
-      address,
-      email: userForm.email || "",
-      name: userForm.name || "",
-      lastName: userForm.lastName || "",
-      codiceFiscale: userForm.codiceFiscale || "",
+      address: address!,
+      email: userForm.email!,
+      name: userForm.name!,
+      lastName: userForm.lastName!,
+      codiceFiscale: userForm.codiceFiscale!,
       verified: true,
-      verifiedBy: userForm.verifiedBy || "",
-    }
+      verifiedBy: userForm.verifiedBy!,
+    };
 
-
-    //TODO: Implement the user verification logic
-    try {
-      const response = await fetch("http://localhost:3002/register/user", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userVerification),
-      })
-      //if response is ok, we need to contact the smart contract to add the user to verified users
-      if (response.ok) {
-        alert("User verified successfully")
-        setIsVerified(true)
-        onClose()
-        router.push("/profile")
-      } else {
-        alert("User verification failed")
-      }
-    } catch (error) {
-      console.error("Error verifying user:", error)
-      alert("An error occurred while verifying the user")
+    let result = await setUserVerification(userVerification);
+    if (result) {
+      onSuccess();
+    } else {
+      console.log("Failed to verify user");
+      onClose();
     }
-  }
+  };
 
   const handleEnterpriseVerify = async () => {
-    if (!address) return
-
-    const enterpriseVerification: CompanyInfo = {
-      address,
-      name: enterpriseForm.name || "",
+    if (!address) return;
+    const companyVerification: CompanyInfo = {
+      address: address!,
+      name: enterpriseForm.name!,
       verified: true,
-      pIva: enterpriseForm.pIva || "",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
+      pIva: enterpriseForm.pIva!,
+    };
 
-    try {
-      const response = await fetch("http://localhost:3002/register/company", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(enterpriseVerification),
-      })
-
-      if (response.ok) {
-        alert("Company verified successfully")
-        setIsVerified(true)
-        onClose()
-        router.push("/profile")
-      } else {
-        alert("Company verification failed")
-      }
-    } catch (error) {
-      console.error("Error verifying company:", error)
-      alert("An error occurred while verifying the company")
+    let result = await setCompanyVerification(companyVerification);
+    if (result) {
+      onSuccess();
+    } else {
+      console.log("Failed to verify company");
+      onClose();
     }
-  }
+  };
 
   const handleSPIDLogin = () => {
-    setShowSPIDPopup(true)
-  }
+    setShowSPIDPopup(true);
+  };
 
-  const handleSPIDLoginSuccess = async () => {
-    setShowSPIDPopup(false)
-    setUserForm((prev) => ({ ...prev, verifiedBy: "SPID", verified: true }))
+  const handleSPIDLoginSuccess = async (username: string, password: string) => {
+    setShowSPIDPopup(false);
 
-    try {
-      const response = await fetch(`http://localhost:3002/verify/spid`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ address, verifiedBy: "SPID" }),
-      })
+    //TODO check the return data from SPID API against the data in the form
 
-      if (response.ok) {
-        alert("SPID verification successful")
-        setIsVerified(true)
-        onClose()
-        router.push("/profile")
-      } else {
-        throw new Error("Failed to update SPID verification")
-      }
-    } catch (error) {
-      console.error("Error updating SPID verification:", error)
-      alert("An error occurred while verifying with SPID")
-    }
-  }
+    setUserForm((prev) => ({ ...prev, verifiedBy: "SPID", verified: true }));
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg max-w-md w-full mx-auto my-auto">
         <div className="p-6">
-        <h2 className="text-2xl font-bold mb-4 text-blue-500">Verify Your Account</h2>
+          <h2 className="text-2xl font-bold mb-4 text-blue-500">Verify Your Account</h2>
 
           <div className="flex mb-4">
             <button
@@ -185,6 +129,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
                 value={userForm.name}
                 onChange={(e) => setUserForm((prev) => ({ ...prev, name: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
               <input
                 type="text"
@@ -192,6 +137,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
                 value={userForm.lastName}
                 onChange={(e) => setUserForm((prev) => ({ ...prev, lastName: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
               <input
                 type="email"
@@ -199,6 +145,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
                 value={userForm.email}
                 onChange={(e) => setUserForm((prev) => ({ ...prev, email: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
               <input
                 type="text"
@@ -206,6 +153,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
                 value={userForm.codiceFiscale}
                 onChange={(e) => setUserForm((prev) => ({ ...prev, codiceFiscale: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
               <button
                 onClick={handleSPIDLogin}
@@ -223,6 +171,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
                 value={enterpriseForm.name}
                 onChange={(e) => setEnterpriseForm((prev) => ({ ...prev, name: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
               <input
                 type="text"
@@ -230,6 +179,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
                 value={enterpriseForm.pIva}
                 onChange={(e) => setEnterpriseForm((prev) => ({ ...prev, pIva: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
               />
             </div>
           )}
@@ -241,6 +191,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
             >
               Cancel
             </button>
+
             <button
               onClick={activeTab === "user" ? handleUserVerify : handleEnterpriseVerify}
               disabled={isVerified}
@@ -249,7 +200,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
                   ? "bg-green-600 text-white cursor-not-allowed" 
                   : "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500"}`}
             >
-              {isVerified ? "Verified" : "Verify"}
+              Verify
             </button>
           </div>
         </div>
@@ -257,7 +208,7 @@ export function Verify({ onClose }: { onClose: () => void }) {
 
       {showSPIDPopup && <SPIDLoginPopup onClose={() => setShowSPIDPopup(false)} onSuccess={handleSPIDLoginSuccess} />}
     </div>
-  )
+  );
 }
 
-export default Verify
+export default Verify;
